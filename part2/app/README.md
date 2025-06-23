@@ -139,16 +139,7 @@ This project follows a Jobsian mindset:
 
 ## 🛠️ Contributors
 
-Project developed as part of the Holberton School curriculum by \[@YourNameHere].
+Project developed as part of the Holberton School curriculum by \[Alejandro Garcia Sanchez].
 
----
 
-## 📌 License
-
-MIT License
-
----
-
-> *"Great artists ship."*
-> This is the ship.
 
