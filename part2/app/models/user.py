@@ -1,7 +1,7 @@
 # In (app) settings/models/user.py
 
 
-from app.models.base import BaseModel
+from app.models.base_models import BaseModel
 import re
 
 
@@ -12,10 +12,10 @@ class User(BaseModel):
         super().__init__()
         if not first_name or len(first_name) > 50:
             raise ValueError(
-                    "First name is required  must be <= 50 characters.")
+                    "First name is required and must be <= 50 characters.")
         if not last_name or len(last_name) > 50:
-            raise ValueError("
-                             Last name is required  must be <= 50 characters.")
+            raise ValueError(
+                "Last name is required and must be <= 50 characters.")
         if not email or not re.match(self.EMAIL_REGEX, email):
             raise ValueError("A valid email is required.")
 

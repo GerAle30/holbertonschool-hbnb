@@ -18,15 +18,14 @@ class AmenityList(Resource):
     def post(self):
         """Register a new amenity"""
         amenity_data = api.payload
-        
+
         # Validate required fields
         if not amenity_data or 'name' not in amenity_data:
             return {'error': 'Missing required field: name'}, 400
-        
+
         # Validate name is not empty
         if not amenity_data['name'].strip():
             return {'error': 'Name cannot be empty'}, 400
-        
         try:
             # Create the amenity using the facade
             new_amenity = facade.create_amenity(amenity_data)
@@ -67,7 +66,7 @@ class AmenityResource(Resource):
             amenity = facade.get_amenity(amenity_id)
             if not amenity:
                 return {'error': 'Amenity not found'}, 404
-            
+
             return {
                 'id': amenity.id,
                 'name': amenity.name,
@@ -83,5 +82,35 @@ class AmenityResource(Resource):
     @api.response(400, 'Invalid input data')
     def put(self, amenity_id):
         """Update an amenity's information"""
-        # Placeholder for the logic to update an amenity by ID
-        pass
+        amenity_data = api.payload
+
+        # Validate required fields
+        if not amenity_data or 'name' not in amenity_data:
+            return {'error': 'Missing required field: name'}, 400
+
+        # Validate name is not empty
+        if not amenity_data['name'].strip():
+            return {'error': 'Name cannot be empty'}, 400
+
+        try:
+            # Check if the amenity exists
+            existing_amenity = facade.get_amenity(amenity_id)
+            if not existing_amenity:
+                return {'error': 'Amenity not found'}, 404
+
+            # Update the amenity using the facade
+            updated_amenity = facade.update_amenity(amenity_id, amenity_data)
+            if updated_amenity:
+                return {
+                    'id': updated_amenity.id,
+                    'name': updated_amenity.name,
+                    'created_at': updated_amenity.created_at.isoformat(),
+                    'updated_at': updated_amenity.updated_at.isoformat()
+                }, 200
+            else:
+                return {'error': 'Failed to update amenity'}, 400
+
+        except ValueError as e:
+            return {'error': str(e)}, 400
+        except Exception as e:
+            return {'error': str(e)}, 500

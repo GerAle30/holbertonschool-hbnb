@@ -21,7 +21,7 @@ class ReviewList(Resource):
     def post(self):
         """Register a new review"""
         review_data = api.payload
-        
+
         try:
             new_review = facade.create_review(review_data)
             return {
@@ -64,7 +64,7 @@ class ReviewResource(Resource):
         review = facade.get_review(review_id)
         if not review:
             return {'error': 'Review not found'}, 404
-        
+
         return {
             'id': review.id,
             'text': review.comment,
@@ -82,12 +82,12 @@ class ReviewResource(Resource):
     def put(self, review_id):
         """Update a review's information"""
         review_data = api.payload
-        
+
         try:
             updated_review = facade.update_review(review_id, review_data)
             if not updated_review:
                 return {'error': 'Review not found'}, 404
-            
+
             return {
                 'id': updated_review.id,
                 'text': updated_review.comment,
@@ -106,8 +106,10 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     def delete(self, review_id):
         """Delete a review"""
-        # Placeholder for  logic and delete a review
-        pass
+        success = facade.delete_review(review_id)
+        if not success:
+            return {'error': 'Review not found'}, 404
+        return {'message': 'Review deleted successfully'}, 200
 
 
 @api.route('/places/<place_id>/reviews')
@@ -116,5 +118,18 @@ class PlaceReviewList(Resource):
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get all reviews for a specific place"""
-        # Placeholder for logic to return a list for reviews for a place
-        pass
+        try:
+            reviews = facade.get_reviews_by_place(place_id)
+            return [
+                {
+                    'id': review.id,
+                    'text': review.comment,
+                    'rating': review.rating,
+                    'user_id': review.user.id,
+                    'place_id': review.place.id,
+                    'created_at': review.created_at.isoformat(),
+                    'updated_at': review.updated_at.isoformat()
+                } for review in reviews
+            ], 200
+        except ValueError as e:
+            return {'error': str(e)}, 404

@@ -57,8 +57,12 @@ class HBnBFacade:
         return self.amenity_repo.get_all()
 
     def update_amenity(self, amenity_id, amenity_data):
-        # Placeholder for logic to update an amenity
-        pass
+        """Update an amenity's information."""
+        amenity = self.amenity_repo.get(amenity_id)
+        if amenity:
+            self.amenity_repo.update(amenity_id, amenity_data)
+            return amenity
+        return None
 
     def create_place(self, place_data):
         """Create a new place and store in the repository."""
@@ -93,8 +97,8 @@ class HBnBFacade:
         return self.place_repo.get(place_id)
 
     def get_all_places(self):
-        # Placeholder for logic to retrieve all places
-        pass
+        """Retrieve all places."""
+        return self.place_repo.get_all()
 
     def update_place(self, place_id, place_data):
         """Update a place's information."""
@@ -168,8 +172,19 @@ class HBnBFacade:
         return self.review_repo.get_all()
 
     def get_reviews_by_place(self, place_id):
-        # Placeholder for logic to retrieve all reviews for a specific place
-        pass
+        """Retrieve all reviews for a specific place."""
+        # Validate place exists
+        place = self.place_repo.get(place_id)
+        if not place:
+            raise ValueError("Place not found")
+
+        # Get all reviews and filter by place_id
+        all_reviews = self.review_repo.get_all()
+        place_reviews = []
+        for review in all_reviews:
+            if review.place.id == place_id:
+                place_reviews.append(review)
+        return place_reviews
 
     def update_review(self, review_id, review_data):
         """Update a review's information."""
@@ -191,22 +206,27 @@ class HBnBFacade:
                 raise ValueError("Place not found")
             review.place = place
 
-        # Validate rating if provided
+        # Validat rating if provided
         if 'rating' in review_data:
             rating = review_data['rating']
             if not isinstance(rating, int) or rating < 1 or rating > 5:
                 raise ValueError("Rating must be an integer between 1 and 5")
             review.rating = rating
 
-        # Update text\comment if provided
+        # Update text\commnt if provided
         if 'text' in review_data:
             review.comment = review_data['text']
 
-        # Save (updates the updated_at timestamp)
+        # Save updates the updated_at timestamp
         review.save()
 
         return review
 
     def delete_review(self, review_id):
-        # Placeholder for logic and delete a review
-        pass
+        """Delete a review by ID."""
+        review = self.review_repo.get(review_id)
+        if not review:
+            return False
+
+        self.review_repo.delete(review_id)
+        return True
