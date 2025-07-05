@@ -2,8 +2,9 @@ from flask import Flask
 from flask_restx import Api
 
 
-def create_app():
+def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
+    app.config.from_object(config_class)
 
     # Register API blueprint
     from app.api.v1 import blueprint as api_v1
