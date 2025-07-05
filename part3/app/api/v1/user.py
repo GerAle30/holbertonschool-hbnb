@@ -46,9 +46,8 @@ class UserList(Resource):
         if existing_user:
             return {'error': 'Email already registered'}, 400
 
-        # Create user and hash password
+        # Create user with password hashing handled by facade
         new_user = facade.create_user(user_data)
-        new_user.hash_password(user_data['password'])
         
         return {'id': new_user.id, 'message': 'User successfully created'}, 201
 

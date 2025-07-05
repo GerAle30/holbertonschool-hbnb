@@ -1,8 +1,8 @@
 from app.persistence.repository import InMemoryRepository
 from app.models.user import User
-from app.models.amenity import Amenity
+from app.models.amenities import Amenity
 from app.models.place import Place
-from app.models.review import Review
+from app.models.reviews import Review
 
 
 class HBnBFacade:
@@ -13,8 +13,18 @@ class HBnBFacade:
         self.amenity_repo = InMemoryRepository()
 
     def create_user(self, user_data):
-        """Create new usr and store in the repo."""
-        user = User(**user_data)
+        """Create new user and store in the repo."""
+        # Extract password from user_data to handle separately
+        user_data_copy = user_data.copy()
+        password = user_data_copy.pop('password', None)
+        
+        # Create user without password
+        user = User(**user_data_copy)
+        
+        # Hash password if provided
+        if password:
+            user.hash_password(password)
+        
         self.user_repo.add(user)
         return user
 
