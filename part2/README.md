@@ -1,218 +1,318 @@
-# 🏡 HBnB Evolution — Technical Documentation
+# 🏡 HBnB Evolution Part 2 - API Implementation
 
-Welcome to the technical blueprint of **HBnB Evolution**, a simplified AirBnB-like web application. This document outlines the **architecture**, **business logic**, and **interaction flows** between core system components.
-
----
-
-## 📌 Project Overview
-
-**HBnB Evolution** allows users to:
-- Register and manage user profiles
-- List and manage places for rent
-- Submit and view reviews on places
-- Associate places with amenities
-
-This documentation serves as a foundation for future development phases by clearly defining system architecture and behavior.
-
----
-
-## 🧱 1. High-Level Architecture
-
-### 🎯 Objective
-
-Visualize the system's **three-layer architecture**:
-1. **Presentation Layer** – User-facing services and APIs
-2. **Business Logic Layer** – Core application models and logic
-3. **Persistence Layer** – Handles communication with the database
-
-### 🧩 Package Diagram
-
-```mermaid
-classDiagram
-    class PresentationLayer {
-        <<interface>>
-        + APIService
-    }
-
-    class BusinessLogicLayer {
-        + Facade
-        + User, Place, Review, Amenity
-    }
-
-    class PersistenceLayer {
-        + UserDAO, PlaceDAO, ReviewDAO, AmenityDAO
-        + DBConnection
-    }
-
-    PresentationLayer --> BusinessLogicLayer : uses (via Facade)
-    BusinessLogicLayer --> PersistenceLayer : accesses data
-
-# 🏡 HBnB Evolution — Technical Documentation
-
-Welcome to the technical blueprint of **HBnB Evolution**, a simplified AirBnB-like web application. This document outlines the **architecture**, **business logic**, and **interaction flows** between core system components.
+Welcome to **HBnB Evolution Part 2**, a fully functional RESTful API implementation for a simplified AirBnB-like platform. This phase implements the complete backend system with a three-layer architecture using Flask-RESTx.
 
 ---
 
 ## 📌 Project Overview
 
-**HBnB Evolution** allows users to:
-- Register and manage user profiles
-- List and manage places for rent
-- Submit and view reviews on places
-- Associate places with amenities
+**HBnB Evolution Part 2** provides a complete REST API for:
+- **User Management**: Register, authenticate, and manage user profiles
+- **Place Management**: Create, list, and manage rental properties
+- **Review System**: Submit and view reviews for places
+- **Amenity Management**: Manage property amenities
 
-This documentation serves as a foundation for future development phases by clearly defining system architecture and behavior.
+### 🚀 Key Features
+- RESTful API with Flask-RESTx
+- Automatic Swagger documentation
+- In-memory data persistence
+- Comprehensive test suite
+- Input validation and error handling
+- Three-layer architecture pattern
 
 ---
 
-## 🧱 1. High-Level Architecture
+## 🏗️ Architecture Overview
 
-### 🎯 Objective
+### Three-Layer Architecture
 
-Visualize the system's **three-layer architecture**:
-1. **Presentation Layer** – User-facing services and APIs
-2. **Business Logic Layer** – Core application models and logic
-3. **Persistence Layer** – Handles communication with the database
+1. **Presentation Layer** (`app/api/v1/`)
+   - RESTful API endpoints
+   - Request/response handling
+   - Input validation
+   - Flask-RESTx namespaces
 
-🧠 2. Business Logic Class Diagram
+2. **Business Logic Layer** (`app/services/`, `app/models/`)
+   - Business rules and logic
+   - Data models and entities
+   - Facade pattern implementation
 
-🎯 Objective
-Define entities with attributes, behaviors, and relationships.
+3. **Persistence Layer** (`app/persistence/`)
+   - Data storage and retrieval
+   - Repository pattern
+   - In-memory storage implementation
 
-📘 Class Diagram
+---
 
-classDiagram
-    class BaseModel {
-        +UUID id
-        +datetime created_at
-        +datetime updated_at
-        +save()
-        +to_dict()
-    }
+## 📂 Project Structure
 
-    class User {
-        +string first_name
-        +string last_name
-        +string email
-        +string password
-        +bool is_admin
-    }
+```
+part2/
+├── app/
+│   ├── __init__.py              # Flask app factory
+│   ├── api/
+│   │   ├── __init__.py
+│   │   └── v1/
+│   │       ├── __init__.py      # API blueprint registration
+│   │       ├── amenities.py     # Amenity endpoints
+│   │       ├── places.py        # Place endpoints
+│   │       ├── reviews.py       # Review endpoints
+│   │       └── user.py          # User endpoints
+│   ├── models/
+│   │   ├── amenities.py         # Amenity model
+│   │   ├── base_models.py       # Base model class
+│   │   ├── place.py             # Place model
+│   │   ├── reviews.py           # Review model
+│   │   └── user.py              # User model
+│   ├── persistence/
+│   │   └── repository.py        # Repository pattern implementation
+│   └── services/
+│       ├── __init__.py
+│       └── facade.py            # Facade pattern implementation
+├── test/
+│   ├── test_*.py                # Unit tests
+│   └── ...
+├── config.py                    # Application configuration
+├── run.py                       # Application entry point
+├── run_tests.py                 # Test runner with utilities
+└── README.md                    # This file
+```
 
-    class Place {
-        +string title
-        +string description
-        +float price
-        +float latitude
-        +float longitude
-    }
+---
 
-    class Review {
-        +int rating
-        +string comment
-    }
+## 🚀 Getting Started
 
-    class Amenity {
-        +string name
-        +string description
-    }
+### Prerequisites
+- Python 3.7+
+- pip (Python package manager)
 
-    User --|> BaseModel
-    Place --|> BaseModel
-    Review --|> BaseModel
-    Amenity --|> BaseModel
+### Installation
 
-    User --> "0..*" Place : owns >
-    Place --> "0..*" Review : receives >
-    User --> "0..*" Review : writes >
-    Place --> "0..*" Amenity : includes >
+1. **Clone the repository** (if not already done):
+   ```bash
+   git clone <repository-url>
+   cd holbertonschool-hbnb/part2
+   ```
 
-🔄 3. API Sequence Diagrams
+2. **Install dependencies**:
+   ```bash
+   pip install flask flask-restx requests
+   ```
 
-🎯 Objective
-Depict how system layers interact to handle API calls.
+3. **Run the application**:
+   ```bash
+   python run.py
+   ```
 
-🧑‍💻 User Registration
+4. **Access the API**:
+   - **Swagger UI**: http://127.0.0.1:5001/api/v1/
+   - **Base API**: http://127.0.0.1:5001/api/v1/
 
-sequenceDiagram
-    participant User
-    participant APIService
-    participant Facade
-    participant UserDAO
-    participant DBConnection
+---
 
-    User->>APIService: POST /register
-    APIService->>Facade: handle_user_creation()
-    Facade->>UserDAO: save_user()
-    UserDAO->>DBConnection: INSERT INTO users
-    DBConnection-->>UserDAO: success
-    UserDAO-->>Facade: user_id
-    Facade-->>APIService: response
-    APIService-->>User: 201 Created + user_id
+## 🔧 API Endpoints
 
-🏠 Place Creation
+### Users (`/api/v1/users`)
+- `POST /api/v1/users/` - Create a new user
+- `GET /api/v1/users/` - Get all users
+- `GET /api/v1/users/{id}` - Get user by ID
+- `PUT /api/v1/users/{id}` - Update user
 
-sequenceDiagram
-    participant User
-    participant APIService
-    participant Facade
-    participant PlaceDAO
-    participant DBConnection
+### Places (`/api/v1/places`)
+- `POST /api/v1/places/` - Create a new place
+- `GET /api/v1/places/` - Get all places
+- `GET /api/v1/places/{id}` - Get place by ID
+- `PUT /api/v1/places/{id}` - Update place
 
-    User->>APIService: POST /places
-    APIService->>Facade: create_place()
-    Facade->>PlaceDAO: save_place()
-    PlaceDAO->>DBConnection: INSERT INTO places
-    DBConnection-->>PlaceDAO: success
-    PlaceDAO-->>Facade: place_id
-    Facade-->>APIService: response
-    APIService-->>User: 201 Created + place_id
+### Reviews (`/api/v1/reviews`)
+- `POST /api/v1/reviews/` - Create a new review
+- `GET /api/v1/reviews/` - Get all reviews
+- `GET /api/v1/reviews/{id}` - Get review by ID
+- `PUT /api/v1/reviews/{id}` - Update review
+- `GET /api/v1/places/{place_id}/reviews` - Get reviews for a place
 
-⭐ Review Submission
+### Amenities (`/api/v1/amenities`)
+- `POST /api/v1/amenities/` - Create a new amenity
+- `GET /api/v1/amenities/` - Get all amenities
+- `GET /api/v1/amenities/{id}` - Get amenity by ID
+- `PUT /api/v1/amenities/{id}` - Update amenity
 
-sequenceDiagram
-    participant User
-    participant APIService
-    participant Facade
-    participant ReviewDAO
-    participant DBConnection
+---
 
-    User->>APIService: POST /reviews
-    APIService->>Facade: create_review()
-    Facade->>ReviewDAO: save_review()
-    ReviewDAO->>DBConnection: INSERT INTO reviews
-    DBConnection-->>ReviewDAO: success
-    ReviewDAO-->>Facade: review_id
-    Facade-->>APIService: response
-    APIService-->>User: 201 Created + review_id
+## 🧪 Testing
 
-🗺️ Fetch Places (By Location)
+### Run All Tests
+```bash
+python run_tests.py
+```
 
-sequenceDiagram
-    participant User
-    participant APIService
-    participant Facade
-    participant PlaceDAO
-    participant DBConnection
+### Run Specific Test Categories
+```bash
+python run_tests.py users        # User endpoint tests
+python run_tests.py places       # Place endpoint tests
+python run_tests.py reviews      # Review endpoint tests
+python run_tests.py amenities    # Amenity endpoint tests
+python run_tests.py validation   # Validation tests
+```
 
-    User->>APIService: GET /places?location=NYC
-    APIService->>Facade: fetch_places(location)
-    Facade->>PlaceDAO: get_places_by_location()
-    PlaceDAO->>DBConnection: SELECT * FROM places WHERE location=NYC
-    DBConnection-->>PlaceDAO: results
-    PlaceDAO-->>Facade: place_list
-    Facade-->>APIService: response
-    APIService-->>User: 200 OK + place_list
+### Access Swagger Documentation
+```bash
+python run_tests.py swagger
+```
 
-📂 Repo Structure
+### View Test Examples
+```bash
+python run_tests.py examples
+```
 
-holbertonschool-hbnb/
-└── part1/
-    ├── diagrams/
-    │   ├── package_diagram.mmd
-    │   ├── class_diagram.mmd
-    │   ├── sequence_user_register.mmd
-    │   ├── sequence_place_creation.mmd
-    │   ├── sequence_review_submission.mmd
-    │   └── sequence_place_fetch.mmd
-    └── README.md ← (You are here!)
+---
+
+## 📋 API Documentation
+
+### Swagger UI
+The API automatically generates interactive documentation using Flask-RESTx:
+- **URL**: http://127.0.0.1:5001/api/v1/
+- **Features**:
+  - Interactive API testing
+  - Complete endpoint documentation
+  - Request/response schemas
+  - Model definitions
+  - Example requests
+
+### Example API Calls
+
+#### Create a User
+```bash
+curl -X POST "http://127.0.0.1:5001/api/v1/users/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com"
+  }'
+```
+
+#### Create a Place
+```bash
+curl -X POST "http://127.0.0.1:5001/api/v1/places/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Cozy Apartment",
+    "description": "A comfortable place to stay",
+    "price": 100.0,
+    "latitude": 37.7749,
+    "longitude": -122.4194,
+    "owner_id": "USER_ID_HERE"
+  }'
+```
+
+#### Create a Review
+```bash
+curl -X POST "http://127.0.0.1:5001/api/v1/reviews/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Great place to stay!",
+    "rating": 5,
+    "user_id": "USER_ID_HERE",
+    "place_id": "PLACE_ID_HERE"
+  }'
+```
+
+---
+
+## 🔍 Key Components
+
+### Models
+- **BaseModel**: Common attributes and methods for all entities
+- **User**: User management with email validation
+- **Place**: Property listings with location and pricing
+- **Review**: Rating and commenting system
+- **Amenity**: Property features and amenities
+
+### Services
+- **HBnBFacade**: Central service layer managing all business logic
+- **Repository Pattern**: Abstract data access layer
+- **InMemoryRepository**: In-memory data storage implementation
+
+### API Layer
+- **Flask-RESTx**: RESTful API framework with automatic documentation
+- **Namespaces**: Organized API endpoints by resource type
+- **Input Validation**: Comprehensive request validation
+- **Error Handling**: Structured error responses
+
+---
+
+## 🧩 Design Patterns
+
+### Facade Pattern
+The `HBnBFacade` class provides a simplified interface to the complex subsystem:
+- Centralizes business logic
+- Manages inter-model relationships
+- Provides consistent API for data operations
+
+### Repository Pattern
+The `Repository` and `InMemoryRepository` classes abstract data access:
+- Separates data access logic from business logic
+- Provides consistent interface for data operations
+- Enables easy switching between storage backends
+
+### Factory Pattern
+The Flask app factory (`create_app()`) enables:
+- Configuration-based app creation
+- Easy testing with different configurations
+- Modular component registration
+
+---
+
+## 🛠️ Development
+
+### Adding New Endpoints
+1. Define the model in `app/models/`
+2. Add business logic to `app/services/facade.py`
+3. Create API endpoints in `app/api/v1/`
+4. Register the namespace in `app/api/v1/__init__.py`
+5. Write tests in `test/`
+
+### Running in Development Mode
+```bash
+python run.py
+```
+The application runs on `http://127.0.0.1:5001` with debug mode enabled.
+
+### Configuration
+Edit `config.py` to modify:
+- Debug settings
+- Secret keys
+- Environment-specific configurations
+
+---
+
+## 🚧 Future Enhancements
+
+- **Database Integration**: Replace in-memory storage with persistent database
+- **Authentication**: JWT-based user authentication
+- **Authorization**: Role-based access control
+- **File Upload**: Support for place images
+- **Search & Filtering**: Advanced place search capabilities
+- **Email Notifications**: User notification system
+- **Caching**: Redis-based caching layer
+
+---
+
+## 🤝 Contributing
+
+1. Follow the existing code structure and patterns
+2. Write comprehensive tests for new features
+3. Update documentation for API changes
+4. Ensure all tests pass before submitting
+
+---
+
+## 📝 License
+
+This project is part of the Holberton School curriculum.
+
+---
+
+**Happy coding! 🚀**
 
