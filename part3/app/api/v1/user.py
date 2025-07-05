@@ -3,7 +3,7 @@ from app.services import facade
 
 api = Namespace('users', description='User operations')
 
-# Define the user model and input validation and documentation
+# Define the user model for input validation and documentation
 user_model = api.model('User', {
     'first_name': fields.String(required=True,
                                 description='First name of the user'),
@@ -11,6 +11,14 @@ user_model = api.model('User', {
                                description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user'),
     'password': fields.String(required=True, description='Password of the user')
+})
+
+# Define the user response model (without password)
+user_response_model = api.model('UserResponse', {
+    'id': fields.String(description='User ID'),
+    'first_name': fields.String(description='First name of the user'),
+    'last_name': fields.String(description='Last name of the user'),
+    'email': fields.String(description='Email of the user')
 })
 
 
@@ -47,6 +55,7 @@ class UserList(Resource):
 
 @api.route('/<user_id>')
 class UserResource(Resource):
+    @api.marshal_with(user_response_model)
     @api.response(200, 'User details retrieved successfully')
     @api.response(404, 'User not found')
     def get(self, user_id):
