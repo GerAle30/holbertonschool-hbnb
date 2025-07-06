@@ -1,4 +1,5 @@
 from flask_restx import Namespace, Resource, fields
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services import facade
 
 api = Namespace('users', description='User operations')
@@ -69,14 +70,21 @@ class UserResource(Resource):
     @api.response(200, 'User successfully updated')
     @api.response(404, 'User not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, user_id):
         """Update a user's information"""
         user_data = api.payload
-
+        current_user = get_jwt_identity()
+        
         # Check the user exists
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
+            
+        # Check if current user is authorized to update this user
+        # Users can only update their own profile, admins can update any profile
+        if current_user['id'] != user_id and not current_user.get('is_admin', False):
+            return {'error': 'Unauthorized to update this user'}, 403
 
         # Check the email is being changed  if new email is already taken
         if 'email' in user_data and user_data['email'] != user.email:

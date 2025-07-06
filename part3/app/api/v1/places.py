@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services import facade
 
 api = Namespace('places', description='Place operations')
@@ -105,9 +106,16 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def post(self):
         """Register a new place"""
         place_data = api.payload
+        current_user = get_jwt_identity()
+        
+        # Check if user is authorized to create place for the specified owner
+        # Users can only create places for themselves, admins can create for anyone
+        if 'owner_id' in place_data and place_data['owner_id'] != current_user['id'] and not current_user.get('is_admin', False):
+            return {'error': 'Unauthorized to create place for another user'}, 403
 
         # Validate required fields
         required_fields = ['title', 'price', 'latitude',
@@ -189,9 +197,11 @@ class PlaceResource(Resource):
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, place_id):
         """Update a place's information"""
         place_data = api.payload
+        current_user = get_jwt_identity()
 
         # Validate that we have some data to update
         if not place_data:
@@ -202,6 +212,11 @@ class PlaceResource(Resource):
             existing_place = facade.get_place(place_id)
             if not existing_place:
                 return {'error': 'Place not found'}, 404
+                
+            # Check if current user is authorized to update this place
+            # Users can only update their own places, admins can update any place
+            if existing_place.owner.id != current_user['id'] and not current_user.get('is_admin', False):
+                return {'error': 'Unauthorized to update this place'}, 403
 
             # Validate title if provided
             if 'title' in place_data:
