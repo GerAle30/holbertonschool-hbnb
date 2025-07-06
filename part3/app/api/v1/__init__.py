@@ -5,6 +5,7 @@ from .user import api as user_ns
 from .amenities import api as amenity_ns
 from .places import api as place_ns
 from .reviews import api as review_ns
+from .auth import api as auth_ns
 
 blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 api = Api(blueprint, version='1.0', title='HBnB API',
@@ -15,3 +16,4 @@ api.add_namespace(user_ns, path='/users')
 api.add_namespace(amenity_ns, path='/amenities')
 api.add_namespace(place_ns, path='/places')
 api.add_namespace(review_ns, path='/reviews')
+api.add_namespace(auth_ns, path='/auth')
