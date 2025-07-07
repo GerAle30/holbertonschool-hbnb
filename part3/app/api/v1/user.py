@@ -22,6 +22,12 @@ user_response_model = api.model('UserResponse', {
     'email': fields.String(description='Email of the user')
 })
 
+# Define the user update model (excluding email and password)
+user_update_model = api.model('UserUpdate', {
+    'first_name': fields.String(description='First name of the user'),
+    'last_name': fields.String(description='Last name of the user')
+})
+
 
 @api.route('/')
 class UserList(Resource):
@@ -66,13 +72,14 @@ class UserResource(Resource):
         return {'id': user.id, 'first_name': user.first_name,
                 'last_name': user.last_name, 'email': user.email}, 200
 
-    @api.expect(user_model, validate=True)
+    @api.expect(user_update_model, validate=True)
     @api.response(200, 'User successfully updated')
     @api.response(404, 'User not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Forbidden - Can only update own profile')
     @jwt_required()
     def put(self, user_id):
-        """Update a user's information"""
+        """Update a user's information (first_name and last_name only)"""
         user_data = api.payload
         current_user = get_jwt_identity()
         
@@ -86,11 +93,15 @@ class UserResource(Resource):
         if current_user['id'] != user_id and not current_user.get('is_admin', False):
             return {'error': 'Unauthorized to update this user'}, 403
 
-        # Check the email is being changed  if new email is already taken
-        if 'email' in user_data and user_data['email'] != user.email:
-            existing_user = facade.get_user_by_email(user_data['email'])
-            if existing_user:
-                return {'error': 'Email already registered'}, 400
+        # Validate that only allowed fields are being updated
+        allowed_fields = {'first_name', 'last_name'}
+        invalid_fields = set(user_data.keys()) - allowed_fields
+        if invalid_fields:
+            return {'error': f'Cannot update fields: {list(invalid_fields)}. Only first_name and last_name can be updated.'}, 400
+
+        # Validate that we have some data to update
+        if not user_data:
+            return {'error': 'No valid data provided for update'}, 400
 
         # Update the user
         updated_user = facade.update_user(user_id, user_data)
