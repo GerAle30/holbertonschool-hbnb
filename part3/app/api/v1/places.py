@@ -35,7 +35,7 @@ place_model = api.model('Place', {
                              description='Latitude of the place'),
     'longitude': fields.Float(required=True,
                               description='Longitude of the place'),
-    'owner_id': fields.String(required=True, description='ID of the owner'),
+    # owner_id is automatically set from JWT token, not required in input
     'owner': fields.Nested(user_model, description='Owner of the place'),
     'amenities': fields.List(fields.Nested(amenity_model),
                              description='List of amenities'),
@@ -112,14 +112,16 @@ class PlaceList(Resource):
         place_data = api.payload
         current_user = get_jwt_identity()
         
-        # Check if user is authorized to create place for the specified owner
-        # Users can only create places for themselves, admins can create for anyone
-        if 'owner_id' in place_data and place_data['owner_id'] != current_user['id'] and not current_user.get('is_admin', False):
-            return {'error': 'Unauthorized to create place for another user'}, 403
-
-        # Validate required fields
-        required_fields = ['title', 'price', 'latitude',
-                           'longitude', 'owner_id']
+        # Ensure the user is authenticated
+        if not current_user:
+            return {'error': 'Authentication required'}, 401
+        
+        # Automatically set owner_id to the authenticated user's ID
+        # This ensures users can only create places for themselves
+        place_data['owner_id'] = current_user['id']
+        
+        # Validate required fields (owner_id is now automatically set)
+        required_fields = ['title', 'price', 'latitude', 'longitude']
         for field in required_fields:
             if not place_data or field not in place_data:
                 error_msg = f'Missing required field: {field}'
