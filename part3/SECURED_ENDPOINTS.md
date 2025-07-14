@@ -1,8 +1,35 @@
-# Secured Endpoints with JWT Authentication
+# API Endpoints Security Overview
 
-This document outlines the JWT-protected endpoints and their authorization rules.
+This document outlines the security configuration for all API endpoints, identifying which are public and which require JWT authentication.
 
-## Authentication Required Endpoints
+## Public Endpoints (No Authentication Required)
+
+The following endpoints are publicly accessible and do not require JWT authentication:
+
+### Places (Read-Only)
+- **GET /api/v1/places/** - Retrieve a list of all places
+- **GET /api/v1/places/<place_id>** - Retrieve detailed information about a specific place
+
+### Users (Read-Only)
+- **GET /api/v1/users/** - Retrieve a list of all users
+- **GET /api/v1/users/<user_id>** - Retrieve user details by ID
+- **POST /api/v1/users/** - Register a new user (account creation)
+
+### Reviews (Read-Only)
+- **GET /api/v1/reviews/** - Retrieve a list of all reviews
+- **GET /api/v1/reviews/<review_id>** - Retrieve review details by ID
+- **GET /api/v1/reviews/places/<place_id>/reviews** - Get all reviews for a specific place
+
+### Amenities (Full Access)
+- **GET /api/v1/amenities/** - Retrieve a list of all amenities
+- **GET /api/v1/amenities/<amenity_id>** - Retrieve amenity details by ID
+- **POST /api/v1/amenities/** - Create a new amenity
+- **PUT /api/v1/amenities/<amenity_id>** - Update an amenity
+
+### Authentication
+- **POST /api/v1/auth/login** - User authentication (login)
+
+## Protected Endpoints (JWT Authentication Required)
 
 All the following endpoints require a valid JWT token in the `Authorization` header:
 ```
