@@ -102,7 +102,7 @@ class ReviewResource(Resource):
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
-    @api.response(403, 'Forbidden - Can only update own reviews')
+    @api.response(403, 'Forbidden - Unauthorized action')
     @jwt_required()
     def put(self, review_id):
         """Update a review's information"""
@@ -116,7 +116,7 @@ class ReviewResource(Resource):
             
         # Users can only update their own reviews
         if existing_review.user.id != current_user['id'] and not current_user.get('is_admin', False):
-            return {'error': 'Can only update your own reviews'}, 403
+            return {'error': 'Unauthorized action.'}, 403
             
         # Prevent changing user_id and place_id in updates
         if 'user_id' in review_data and review_data['user_id'] != existing_review.user.id:
