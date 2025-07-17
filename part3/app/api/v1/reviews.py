@@ -145,7 +145,7 @@ class ReviewResource(Resource):
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
-    @api.response(403, 'Forbidden - Can only delete own reviews')
+    @api.response(403, 'Forbidden - Unauthorized action')
     @jwt_required()
     def delete(self, review_id):
         """Delete a review"""
@@ -158,7 +158,7 @@ class ReviewResource(Resource):
             
         # Users can only delete their own reviews
         if existing_review.user.id != current_user['id'] and not current_user.get('is_admin', False):
-            return {'error': 'Can only delete your own reviews'}, 403
+            return {'error': 'Unauthorized action.'}, 403
         
         success = facade.delete_review(review_id)
         if not success:
