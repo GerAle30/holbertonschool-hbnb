@@ -218,7 +218,7 @@ class PlaceResource(Resource):
             # Check if current user is authorized to update this place
             # Users can only update their own places, admins can update any place
             if existing_place.owner.id != current_user['id'] and not current_user.get('is_admin', False):
-                return {'error': 'Unauthorized to update this place'}, 403
+                return {'error': 'Unauthorized action.'}, 403
 
             # Validate title if provided
             if 'title' in place_data:

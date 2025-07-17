@@ -19,7 +19,7 @@ class ReviewList(Resource):
     @api.expect(review_model)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
-    @api.response(403, 'Forbidden - Cannot review own place or already reviewed')
+    @api.response(400, 'Bad Request - Cannot review own place or already reviewed')
     @jwt_required()
     def post(self):
         """Register a new review"""
@@ -37,13 +37,13 @@ class ReviewList(Resource):
             
         # Users cannot review their own places
         if place.owner.id == current_user['id']:
-            return {'error': 'Cannot review your own place'}, 403
+            return {'error': 'You cannot review your own place.'}, 400
             
         # Check if user has already reviewed this place
         existing_reviews = facade.get_reviews_by_place(review_data.get('place_id'))
         for review in existing_reviews:
             if review.user.id == current_user['id']:
-                return {'error': 'You have already reviewed this place'}, 403
+                return {'error': 'You have already reviewed this place.'}, 400
 
         try:
             new_review = facade.create_review(review_data)
