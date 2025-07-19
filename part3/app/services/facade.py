@@ -15,22 +15,28 @@ class HBnBFacade:
 
     def create_user(self, user_data):
         """Create new user and store in the repo."""
+        # Check if email already exists using UserRepository method
+        if self.user_repo.email_exists(user_data.get('email')):
+            raise ValueError("Email already registered")
+        
         # Extract password from user_data to handle separately
         user_data_copy = user_data.copy()
         password = user_data_copy.pop('password', None)
         
+        if not password:
+            raise ValueError("Password is required")
+        
         # Create user without password
         user = User(**user_data_copy)
         
-        # Hash password if provided
-        if password:
-            user.hash_password(password)
+        # Hash password
+        user.hash_password(password)
         
         self.user_repo.add(user)
         return user
 
     def get_user(self, user_id):
-        """Retrieve a usr by id."""
+        """Retrieve a user by id."""
         return self.user_repo.get(user_id)
 
     def get_user_by_email(self, email):
@@ -43,22 +49,56 @@ class HBnBFacade:
 
     def update_user(self, user_id, user_data):
         """Update a user's information."""
-        user = self.user_repo.get(user_id)
-        if not user:
-            return None
-            
-        # Handle password hashing if password is being updated
+        # Handle password update using UserRepository specialized method
         if 'password' in user_data:
             password = user_data.pop('password')
-            user.hash_password(password)
+            updated_user = self.user_repo.update_password(user_id, password)
+            if not updated_user:
+                return None
+            # Continue with other updates if there are any
+            if not user_data:  # If only password was being updated
+                return updated_user
+        
+        # Check email uniqueness if email is being updated
+        if 'email' in user_data:
+            current_user = self.user_repo.get(user_id)
+            if not current_user:
+                return None
             
-        # Update other fields directly on the user object
-        for field, value in user_data.items():
-            if hasattr(user, field):
-                setattr(user, field, value)
-                
-        # Update the user in the repository
+            new_email = user_data['email']
+            if new_email != current_user.email and self.user_repo.email_exists(new_email):
+                raise ValueError("Email already registered")
+        
+        # Update other fields using repository method
         return self.user_repo.update(user_id, user_data)
+    
+    def authenticate_user(self, email, password):
+        """Authenticate a user with email and password."""
+        return self.user_repo.authenticate_user(email, password)
+    
+    def get_users_by_name(self, first_name=None, last_name=None):
+        """Search users by name."""
+        return self.user_repo.get_users_by_name(first_name, last_name)
+    
+    def get_all_admin_users(self):
+        """Retrieve all admin users."""
+        return self.user_repo.get_all_admins()
+    
+    def toggle_user_admin_status(self, user_id):
+        """Toggle admin status for a user."""
+        return self.user_repo.toggle_admin_status(user_id)
+    
+    def get_recent_users(self, limit=10):
+        """Get recently created users."""
+        return self.user_repo.get_recent_users(limit)
+    
+    def get_user_statistics(self):
+        """Get user statistics for admin dashboard."""
+        return {
+            'total_users': self.user_repo.count_users(),
+            'admin_users': self.user_repo.count_admin_users(),
+            'recent_users': len(self.user_repo.get_recent_users(5))
+        }
 
     def create_amenity(self, amenity_data):
         """Create a new amenity and store in the repository."""
