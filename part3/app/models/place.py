@@ -1,5 +1,6 @@
 from app import db
 from .base_models import BaseModel
+from sqlalchemy.orm import relationship
 
 
 class Place(BaseModel):
@@ -16,9 +17,15 @@ class Place(BaseModel):
     price = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    
+    # Relationships
+    owner = relationship('User', back_populates='places')
+    amenities = relationship('Amenity', secondary='place_amenities', back_populates='places')
+    reviews = relationship('Review', back_populates='place')
 
     def __init__(self, title=None, description=None, price=None, 
-                 latitude=None, longitude=None, **kwargs):
+                 latitude=None, longitude=None, owner_id=None, **kwargs):
         """Initialize a new Place instance with validation.
         
         Args:
@@ -27,6 +34,7 @@ class Place(BaseModel):
             price (float): Price per night (required, must be positive)
             latitude (float): Latitude coordinate (required, -90 to 90)
             longitude (float): Longitude coordinate (required, -180 to 180)
+            owner_id (str): ID of the place owner (required)
             **kwargs: Additional keyword arguments passed to BaseModel
         
         Raises:
@@ -77,6 +85,8 @@ class Place(BaseModel):
             self.latitude = float(latitude)
         if longitude is not None:
             self.longitude = float(longitude)
+        if owner_id is not None:
+            self.owner_id = owner_id
     
     def __repr__(self):
         """Return string representation of Place instance."""

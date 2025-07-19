@@ -15,6 +15,14 @@ review_model = api.model('Review', {
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
+# Define the review update model (all fields optional)
+review_update_model = api.model('ReviewUpdate', {
+    'text': fields.String(description='Text of the review'),
+    'rating': fields.Integer(description='Rating of the place (1-5)'),
+    'user_id': fields.String(description='ID of the user (cannot be changed)'),
+    'place_id': fields.String(description='ID of the place (cannot be changed)')
+})
+
 
 @api.route('/')
 class ReviewList(Resource):
@@ -51,7 +59,7 @@ class ReviewList(Resource):
             new_review = facade.create_review(review_data)
             return {
                 'id': new_review.id,
-                'text': new_review.comment,
+                'text': new_review.text,
                 'rating': new_review.rating,
                 'user_id': new_review.user.id,
                 'place_id': new_review.place.id,
@@ -70,7 +78,7 @@ class ReviewList(Resource):
         return [
             {
                 'id': review.id,
-                'text': review.comment,
+                'text': review.text,
                 'rating': review.rating,
                 'user_id': review.user.id,
                 'place_id': review.place.id,
@@ -92,7 +100,7 @@ class ReviewResource(Resource):
 
         return {
             'id': review.id,
-            'text': review.comment,
+            'text': review.text,
             'rating': review.rating,
             'user_id': review.user.id,
             'place_id': review.place.id,
@@ -100,7 +108,7 @@ class ReviewResource(Resource):
             'updated_at': review.updated_at.isoformat()
         }, 200
 
-    @api.expect(review_model, validate=True)
+    @api.expect(review_update_model, validate=True)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
@@ -147,7 +155,7 @@ class ReviewResource(Resource):
             # Prepare response with admin bypass tracking
             response_data = {
                 'id': updated_review.id,
-                'text': updated_review.comment,
+                'text': updated_review.text,
                 'rating': updated_review.rating,
                 'user_id': updated_review.user.id,
                 'place_id': updated_review.place.id,

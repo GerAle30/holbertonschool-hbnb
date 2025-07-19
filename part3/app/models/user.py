@@ -1,5 +1,6 @@
 from app import db, bcrypt
 from app.models.base_models import BaseModel
+from sqlalchemy.orm import relationship
 import re
 
 
@@ -20,6 +21,10 @@ class User(BaseModel):
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+    
+    # Relationships
+    places = relationship('Place', back_populates='owner')
+    reviews = relationship('Review', back_populates='user')
 
     def __init__(self, first_name=None, last_name=None, email=None, is_admin=False, **kwargs):
         """Initialize a new User instance with validation.

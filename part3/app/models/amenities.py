@@ -1,5 +1,12 @@
 from app import db
 from .base_models import BaseModel
+from sqlalchemy.orm import relationship
+
+# Association table for many-to-many relationship between Place and Amenity
+place_amenities = db.Table('place_amenities',
+    db.Column('place_id', db.String(36), db.ForeignKey('places.id'), primary_key=True),
+    db.Column('amenity_id', db.String(36), db.ForeignKey('amenities.id'), primary_key=True)
+)
 
 
 class Amenity(BaseModel):
@@ -12,6 +19,9 @@ class Amenity(BaseModel):
     
     # Column definitions with appropriate constraints
     name = db.Column(db.String(50), nullable=False, unique=True)
+    
+    # Relationships
+    places = relationship('Place', secondary='place_amenities', back_populates='amenities')
 
     def __init__(self, name=None, **kwargs):
         """Initialize a new Amenity instance with validation.

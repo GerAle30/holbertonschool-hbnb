@@ -65,7 +65,7 @@ def serialize_place(place):
         reviews_data = [
             {
                 'id': review.id,
-                'text': review.comment,
+                'text': review.text,
                 'rating': review.rating,
                 'user_id': review.user.id
             }
@@ -76,7 +76,7 @@ def serialize_place(place):
 
     return {
         'id': place.id,
-        'title': place.name,  # Map name back to title for API consistency
+        'title': place.title,  # Using correct attribute name
         'description': place.description,
         'price': place.price,
         'latitude': place.latitude,

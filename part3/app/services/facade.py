@@ -154,13 +154,14 @@ class HBnBFacade:
             if not amenity:
                 raise ValueError(f"Amenity {amenity_id} not found")
         
-        # Create place with title
+        # Create place with all required data including owner_id
         place = Place(
             title=place_data['title'],
             description=place_data.get('description', ''),
             price=place_data['price'],
             latitude=place_data['latitude'],
-            longitude=place_data['longitude']
+            longitude=place_data['longitude'],
+            owner_id=place_data['owner_id']
         )
         
         self.place_repo.add(place)
@@ -239,10 +240,12 @@ class HBnBFacade:
         if not isinstance(rating, int) or rating < 1 or rating > 5:
             raise ValueError("Rating must be an integer between 1 and 5")
 
-        # Create review (relationships will be handled later)
+        # Create review with all required data including user_id and place_id
         review = Review(
             text=review_data.get('text', ''),
-            rating=rating
+            rating=rating,
+            user_id=review_data['user_id'],
+            place_id=review_data['place_id']
         )
 
         self.review_repo.add(review)
