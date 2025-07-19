@@ -76,7 +76,8 @@ class UserResource(Resource):
     @api.response(200, 'User successfully updated')
     @api.response(404, 'User not found')
     @api.response(400, 'Invalid input data')
-    @api.response(403, 'Forbidden - Can only update own profile')
+    @api.response(403, 'Forbidden - Unauthorized action')
+    @api.response(400, 'Bad Request - Cannot modify email or password')
     @jwt_required()
     def put(self, user_id):
         """Update a user's information (first_name and last_name only)"""
@@ -91,7 +92,11 @@ class UserResource(Resource):
         # Check if current user is authorized to update this user
         # Users can only update their own profile, admins can update any profile
         if current_user['id'] != user_id and not current_user.get('is_admin', False):
-            return {'error': 'Unauthorized to update this user'}, 403
+            return {'error': 'Unauthorized action.'}, 403
+
+        # Check if user is trying to modify email or password
+        if 'email' in user_data or 'password' in user_data:
+            return {'error': 'You cannot modify email or password.'}, 400
 
         # Validate that only allowed fields are being updated
         allowed_fields = {'first_name', 'last_name'}
