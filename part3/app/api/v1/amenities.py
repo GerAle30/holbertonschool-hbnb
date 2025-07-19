@@ -14,40 +14,64 @@ amenity_model = api.model('Amenity', {
 
 @api.route('/')
 class AmenityList(Resource):
-    @api.expect(amenity_model)
+    @api.expect(amenity_model, validate=True)
     @api.response(201, 'Amenity successfully created')
-    @api.response(400, 'Invalid input data')
+    @api.response(400, 'Invalid input data or duplicate amenity name')
     @api.response(403, 'Forbidden - Admin privileges required')
     @jwt_required()
-    @admin_required
     def post(self):
-        """Register a new amenity (Admin only)"""
-        amenity_data = api.payload
+        """Create a new amenity (Admin only) - Enhanced admin verification"""
+        # Enhanced admin privilege check using both get_jwt_identity() and get_jwt()
+        current_user = get_jwt_identity()
+        jwt_claims = get_jwt()
+        
+        # Check admin privileges from both identity and JWT claims
+        is_admin = current_user.get('is_admin', False) or jwt_claims.get('is_admin', False)
+        if not is_admin:
+            return {'error': 'Admin privileges required'}, 403
+        
+        # Get amenity data from request
+        data = request.json
+        if not data:
+            return {'error': 'No data provided'}, 400
         
         # Enhanced validation
-        if not amenity_data or 'name' not in amenity_data:
+        name = data.get('name')
+        if not name:
             return {'error': 'Missing required field: name'}, 400
 
-        name = amenity_data['name']
-        if not name or not name.strip():
-            return {'error': 'Name cannot be empty'}, 400
+        # Validate name is not empty or whitespace only
+        if not name.strip():
+            return {'error': 'Amenity name cannot be empty or whitespace'}, 400
+        
+        # Clean and standardize the name
+        cleaned_name = name.strip()
             
-        # Check for duplicate amenity names
+        # Check for duplicate amenity names (case-insensitive)
         existing_amenities = facade.get_all_amenities()
         for amenity in existing_amenities:
-            if amenity.name.lower() == name.strip().lower():
-                return {'error': 'Amenity with this name already exists'}, 400
+            if amenity.name.lower() == cleaned_name.lower():
+                return {'error': f'Amenity with name "{cleaned_name}" already exists'}, 400
         
+        # Logic to create a new amenity
         try:
-            # Create the amenity using the facade
+            amenity_data = {'name': cleaned_name}
             new_amenity = facade.create_amenity(amenity_data)
+            
+            if not new_amenity:
+                return {'error': 'Failed to create amenity'}, 400
+            
             return {
                 'id': new_amenity.id,
                 'name': new_amenity.name,
                 'created_at': new_amenity.created_at.isoformat(),
                 'updated_at': new_amenity.updated_at.isoformat(),
-                'message': 'Amenity successfully created'
+                'message': 'Amenity successfully created by administrator',
+                'created_by_admin': True
             }, 201
+            
+        except ValueError as ve:
+            return {'error': f'Invalid amenity data: {str(ve)}'}, 400
         except Exception as e:
             return {'error': f'Failed to create amenity: {str(e)}'}, 400
 
