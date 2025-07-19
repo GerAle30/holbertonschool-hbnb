@@ -113,24 +113,39 @@ class AmenityResource(Resource):
         except Exception as e:
             return {'error': str(e)}, 500
 
-    @api.expect(amenity_model)
+    @api.expect(amenity_model, validate=True)
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
-    @api.response(400, 'Invalid input data')
+    @api.response(400, 'Invalid input data or duplicate name')
     @api.response(403, 'Forbidden - Admin privileges required')
     @jwt_required()
-    @admin_required
     def put(self, amenity_id):
-        """Update an amenity's information (Admin only)"""
-        amenity_data = api.payload
+        """Update an amenity's information (Admin only) - Enhanced admin verification"""
+        # Enhanced admin privilege check using both get_jwt_identity() and get_jwt()
+        current_user = get_jwt_identity()
+        jwt_claims = get_jwt()
+        
+        # Check admin privileges from both identity and JWT claims
+        is_admin = current_user.get('is_admin', False) or jwt_claims.get('is_admin', False)
+        if not is_admin:
+            return {'error': 'Admin privileges required'}, 403
+        
+        # Get amenity data from request
+        data = request.json
+        if not data:
+            return {'error': 'No data provided'}, 400
         
         # Enhanced validation
-        if not amenity_data or 'name' not in amenity_data:
+        name = data.get('name')
+        if not name:
             return {'error': 'Missing required field: name'}, 400
 
-        name = amenity_data['name']
-        if not name or not name.strip():
-            return {'error': 'Name cannot be empty'}, 400
+        # Validate name is not empty or whitespace only
+        if not name.strip():
+            return {'error': 'Amenity name cannot be empty or whitespace'}, 400
+        
+        # Clean and standardize the name
+        cleaned_name = name.strip()
 
         try:
             # Check if the amenity exists
@@ -138,27 +153,30 @@ class AmenityResource(Resource):
             if not existing_amenity:
                 return {'error': 'Amenity not found'}, 404
 
-            # Check for duplicate names (excluding current amenity)
+            # Check for duplicate names (excluding current amenity) - case-insensitive
             existing_amenities = facade.get_all_amenities()
             for amenity in existing_amenities:
                 if (amenity.id != amenity_id and 
-                    amenity.name.lower() == name.strip().lower()):
-                    return {'error': 'Another amenity with this name already exists'}, 400
+                    amenity.name.lower() == cleaned_name.lower()):
+                    return {'error': f'Another amenity with name "{cleaned_name}" already exists'}, 400
 
-            # Update the amenity using the facade
+            # Logic to update an amenity
+            amenity_data = {'name': cleaned_name}
             updated_amenity = facade.update_amenity(amenity_id, amenity_data)
-            if updated_amenity:
-                return {
-                    'id': updated_amenity.id,
-                    'name': updated_amenity.name,
-                    'created_at': updated_amenity.created_at.isoformat(),
-                    'updated_at': updated_amenity.updated_at.isoformat(),
-                    'message': 'Amenity successfully updated'
-                }, 200
-            else:
+            
+            if not updated_amenity:
                 return {'error': 'Failed to update amenity'}, 400
+            
+            return {
+                'id': updated_amenity.id,
+                'name': updated_amenity.name,
+                'created_at': updated_amenity.created_at.isoformat(),
+                'updated_at': updated_amenity.updated_at.isoformat(),
+                'message': 'Amenity successfully modified by administrator',
+                'modified_by_admin': True
+            }, 200
 
-        except ValueError as e:
-            return {'error': str(e)}, 400
+        except ValueError as ve:
+            return {'error': f'Invalid amenity data: {str(ve)}'}, 400
         except Exception as e:
             return {'error': f'Update failed: {str(e)}'}, 500
