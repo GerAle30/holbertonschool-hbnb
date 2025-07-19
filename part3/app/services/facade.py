@@ -1,5 +1,8 @@
 from app.persistence.repository import SQLAlchemyRepository
 from app.persistence.user_repository import UserRepository
+from app.persistence.place_repository import PlaceRepository
+from app.persistence.review_repository import ReviewRepository
+from app.persistence.amenity_repository import AmenityRepository
 from app.models.user import User
 from app.models.amenities import Amenity
 from app.models.place import Place
@@ -9,9 +12,9 @@ from app.models.reviews import Review
 class HBnBFacade:
     def __init__(self):
         self.user_repo = UserRepository()  # Use specialized UserRepository
-        self.place_repo = SQLAlchemyRepository(Place)
-        self.review_repo = SQLAlchemyRepository(Review)
-        self.amenity_repo = SQLAlchemyRepository(Amenity)
+        self.place_repo = PlaceRepository()  # Use specialized PlaceRepository
+        self.review_repo = ReviewRepository()  # Use specialized ReviewRepository
+        self.amenity_repo = AmenityRepository()  # Use specialized AmenityRepository
 
     def create_user(self, user_data):
         """Create new user and store in the repo."""
@@ -116,7 +119,27 @@ class HBnBFacade:
 
     def update_amenity(self, amenity_id, amenity_data):
         """Update an amenity's information."""
+        # Check name uniqueness if name is being updated
+        if 'name' in amenity_data:
+            if self.amenity_repo.name_exists(amenity_data['name'], exclude_id=amenity_id):
+                raise ValueError("Amenity name already exists")
         return self.amenity_repo.update(amenity_id, amenity_data)
+    
+    def get_amenities_by_name_pattern(self, pattern):
+        """Search amenities by name pattern."""
+        return [amenity for amenity in self.amenity_repo.get_all() 
+                if pattern.lower() in amenity.name.lower()]
+    
+    def get_recent_amenities(self, limit=10):
+        """Get recently created amenities."""
+        return self.amenity_repo.get_recent_amenities(limit)
+    
+    def get_amenity_statistics(self):
+        """Get amenity statistics."""
+        return {
+            'total_amenities': self.amenity_repo.count_amenities(),
+            'recent_amenities': len(self.amenity_repo.get_recent_amenities(5))
+        }
 
     def create_place(self, place_data):
         """Create a new place and store in the repository."""
@@ -124,25 +147,22 @@ class HBnBFacade:
         owner = self.user_repo.get(place_data['owner_id'])
         if not owner:
             raise ValueError("Owner not found")
-        # Validate amenities exist
-        amenities = []
+        # Note: Amenity relationships will be handled when relationships are implemented
+        # For now, we only validate that amenities exist but don't create the relationships
         for amenity_id in place_data.get('amenities', []):
             amenity = self.amenity_repo.get(amenity_id)
             if not amenity:
                 raise ValueError(f"Amenity {amenity_id} not found")
-            amenities.append(amenity)
-        # Create place with name instead of title to match model
+        
+        # Create place with title
         place = Place(
-            name=place_data['title'],  # Map title
+            title=place_data['title'],
             description=place_data.get('description', ''),
             price=place_data['price'],
             latitude=place_data['latitude'],
-            longitude=place_data['longitude'],
-            owner=owner
+            longitude=place_data['longitude']
         )
-        # Add amenities
-        for amenity in amenities:
-            place.add_amenity(amenity)
+        
         self.place_repo.add(place)
         return place
 
@@ -159,34 +179,48 @@ class HBnBFacade:
         place = self.place_repo.get(place_id)
         if not place:
             return None
-        # Validate owner  provided
+        # Note: Owner and amenity relationships will be handled when relationships are implemented
+        # For now, we only validate that referenced entities exist
         if 'owner_id' in place_data:
             owner = self.user_repo.get(place_data['owner_id'])
             if not owner:
                 raise ValueError("Owner not found")
-            place.owner = owner
-        # Validate amenities  provided
+        
         if 'amenities' in place_data:
-            amenities = []
             for amenity_id in place_data['amenities']:
                 amenity = self.amenity_repo.get(amenity_id)
                 if not amenity:
                     raise ValueError(f"Amenity {amenity_id} not found")
-                amenities.append(amenity)
-            place.amenities = amenities
-        # Update other fields
-        if 'title' in place_data:
-            place.name = place_data['title']  # Map title
-        if 'description' in place_data:
-            place.description = place_data['description']
-        if 'price' in place_data:
-            place.price = place_data['price']
-        if 'latitude' in place_data:
-            place.latitude = place_data['latitude']
-        if 'longitude' in place_data:
-            place.longitude = place_data['longitude']
+        # Update fields directly
+        for field in ['title', 'description', 'price', 'latitude', 'longitude']:
+            if field in place_data:
+                setattr(place, field, place_data[field])
         # Update the place in the repository
         return self.place_repo.update(place_id, place_data)
+    
+    def get_places_by_price_range(self, min_price, max_price):
+        """Get places within a price range."""
+        return self.place_repo.get_places_by_price_range(min_price, max_price)
+    
+    def get_places_by_location(self, latitude, longitude, radius_km=10):
+        """Get places near a location."""
+        return self.place_repo.get_places_by_location(latitude, longitude, radius_km)
+    
+    def search_places_by_title(self, pattern):
+        """Search places by title pattern."""
+        return self.place_repo.get_places_by_title_pattern(pattern)
+    
+    def get_recent_places(self, limit=10):
+        """Get recently created places."""
+        return self.place_repo.get_recent_places(limit)
+    
+    def get_places_ordered_by_price(self, ascending=True):
+        """Get places ordered by price."""
+        return self.place_repo.get_places_ordered_by_price(ascending)
+    
+    def get_place_statistics(self):
+        """Get place statistics."""
+        return self.place_repo.get_price_statistics()
 
     def create_review(self, review_data):
         """Create a new review and store in the repository."""
@@ -205,12 +239,10 @@ class HBnBFacade:
         if not isinstance(rating, int) or rating < 1 or rating > 5:
             raise ValueError("Rating must be an integer between 1 and 5")
 
-        # Create (map 'text' to 'comment' to match model)
+        # Create review (relationships will be handled later)
         review = Review(
-            user=user,
-            place=place,
-            rating=rating,
-            comment=review_data.get('text', '')
+            text=review_data.get('text', ''),
+            rating=rating
         )
 
         self.review_repo.add(review)
@@ -231,16 +263,9 @@ class HBnBFacade:
         if not place:
             raise ValueError("Place not found")
 
-        # Use SQLAlchemy filtering capabilities
-        # Note: This will need to be adjusted when models have proper relationships
-        all_reviews = self.review_repo.get_all()
-        place_reviews = []
-        for review in all_reviews:
-            if hasattr(review, 'place_id') and review.place_id == place_id:
-                place_reviews.append(review)
-            elif hasattr(review, 'place') and review.place.id == place_id:
-                place_reviews.append(review)
-        return place_reviews
+        # Note: This functionality will be implemented when relationships are added
+        # For now, return empty list since we don't have foreign key relationships yet
+        return []
 
     def update_review(self, review_id, review_data):
         """Update a review's information."""
@@ -248,30 +273,27 @@ class HBnBFacade:
         if not review:
             return None
 
-        # Validate user if provided
+        # Note: User and place relationships will be handled when relationships are implemented
+        # For now, we only validate that referenced entities exist
         if 'user_id' in review_data:
             user = self.user_repo.get(review_data['user_id'])
             if not user:
                 raise ValueError("User not found")
-            review.user = user
 
-        # Validate place if provided
         if 'place_id' in review_data:
             place = self.place_repo.get(review_data['place_id'])
             if not place:
                 raise ValueError("Place not found")
-            review.place = place
 
-        # Validat rating if provided
+        # Update fields directly
         if 'rating' in review_data:
             rating = review_data['rating']
             if not isinstance(rating, int) or rating < 1 or rating > 5:
                 raise ValueError("Rating must be an integer between 1 and 5")
             review.rating = rating
 
-        # Update text\commnt if provided
         if 'text' in review_data:
-            review.comment = review_data['text']
+            review.text = review_data['text']
 
         # Save updates the updated_at timestamp
         review.save()
@@ -285,3 +307,27 @@ class HBnBFacade:
     def delete_review(self, review_id):
         """Delete a review by ID."""
         return self.review_repo.delete(review_id)
+    
+    def get_reviews_by_rating(self, rating):
+        """Get reviews with a specific rating."""
+        return self.review_repo.get_reviews_by_rating(rating)
+    
+    def get_reviews_by_rating_range(self, min_rating, max_rating):
+        """Get reviews within a rating range."""
+        return self.review_repo.get_reviews_by_rating_range(min_rating, max_rating)
+    
+    def get_high_rated_reviews(self, min_rating=4):
+        """Get reviews with high ratings."""
+        return self.review_repo.get_high_rated_reviews(min_rating)
+    
+    def search_reviews_by_text(self, search_term):
+        """Search reviews by text content."""
+        return self.review_repo.search_reviews_by_text(search_term)
+    
+    def get_recent_reviews(self, limit=10):
+        """Get recently created reviews."""
+        return self.review_repo.get_recent_reviews(limit)
+    
+    def get_review_statistics(self):
+        """Get comprehensive review statistics."""
+        return self.review_repo.get_rating_statistics()
