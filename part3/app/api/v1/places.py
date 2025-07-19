@@ -203,31 +203,34 @@ class PlaceResource(Resource):
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Forbidden - Unauthorized action')
     @jwt_required()
     def put(self, place_id):
-        """Update a place's information with enhanced RBAC"""
-        place_data = api.payload
+        """Update a place's information - Admin bypass ownership restrictions"""
+        current_user = get_jwt_identity()
+        jwt_claims = get_jwt()
         
-        # Get comprehensive user info using RBAC utilities
-        user_info = get_current_user_info()
-        current_user_id = user_info['user_id']
-        is_admin = user_info['is_admin']
-
+        # Enhanced admin privilege check using both identity and claims
+        is_admin = current_user.get('is_admin', False) or jwt_claims.get('is_admin', False)
+        user_id = current_user.get('id')
+        
         # Validate that we have some data to update
+        place_data = request.json
         if not place_data:
             return {'error': 'No data provided for update'}, 400
 
         try:
             # Check the place exists
-            existing_place = facade.get_place(place_id)
-            if not existing_place:
+            place = facade.get_place(place_id)
+            if not place:
                 return {'error': 'Place not found'}, 404
                 
-            # Enhanced authorization check using RBAC
-            is_authorized, current_user, admin_status = check_admin_or_owner(existing_place.owner.id)
-            if not is_authorized:
-                return {'error': 'Unauthorized action.'}, 403
+            # Admin bypass ownership restrictions - exact implementation as specified
+            if not is_admin and place.owner.id != user_id:
+                return {'error': 'Unauthorized action'}, 403
 
+            # Logic to update the place - comprehensive validation
+            
             # Validate title if provided
             if 'title' in place_data:
                 if not place_data['title'] or not place_data['title'].strip():
@@ -238,8 +241,7 @@ class PlaceResource(Resource):
                 try:
                     price = float(place_data['price'])
                     if price <= 0:
-                        error_msg = 'Price must be a positive number'
-                        return {'error': error_msg}, 400
+                        return {'error': 'Price must be a positive number'}, 400
                 except (ValueError, TypeError):
                     return {'error': 'Price must be a valid number'}, 400
 
@@ -248,8 +250,7 @@ class PlaceResource(Resource):
                 try:
                     latitude = float(place_data['latitude'])
                     if latitude < -90 or latitude > 90:
-                        error_msg = 'Latitude must be between -90 and 90'
-                        return {'error': error_msg}, 400
+                        return {'error': 'Latitude must be between -90 and 90'}, 400
                 except (ValueError, TypeError):
                     return {'error': 'Latitude must be a valid number'}, 400
 
@@ -258,8 +259,7 @@ class PlaceResource(Resource):
                 try:
                     longitude = float(place_data['longitude'])
                     if longitude < -180 or longitude > 180:
-                        error_msg = 'Longitude must be between -180 and 180'
-                        return {'error': error_msg}, 400
+                        return {'error': 'Longitude must be between -180 and 180'}, 400
                 except (ValueError, TypeError):
                     return {'error': 'Longitude must be a valid number'}, 400
 
@@ -274,12 +274,22 @@ class PlaceResource(Resource):
             if not updated_place:
                 return {'error': 'Failed to update place'}, 400
 
-            return serialize_place(updated_place), 200
+            # Prepare response with admin bypass tracking
+            response_data = serialize_place(updated_place)
+            
+            # Add admin modification tracking if admin performed the update
+            if is_admin and place.owner.id != user_id:
+                response_data['message'] = 'Place successfully modified by administrator'
+                response_data['modified_by_admin'] = True
+            else:
+                response_data['message'] = 'Place successfully updated'
 
-        except ValueError as e:
-            return {'error': str(e)}, 400
+            return response_data, 200
+
+        except ValueError as ve:
+            return {'error': f'Invalid data: {str(ve)}'}, 400
         except Exception as e:
-            return {'error': str(e)}, 500
+            return {'error': f'Update failed: {str(e)}'}, 500
     
     @api.response(200, 'Place deleted successfully')
     @api.response(404, 'Place not found')

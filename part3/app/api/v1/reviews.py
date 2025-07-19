@@ -1,4 +1,5 @@
 from flask_restx import Namespace, Resource, fields
+from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 from app.utils.rbac import check_admin_or_owner, get_current_user_info
@@ -99,87 +100,114 @@ class ReviewResource(Resource):
             'updated_at': review.updated_at.isoformat()
         }, 200
 
-    @api.expect(review_model)
+    @api.expect(review_model, validate=True)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Forbidden - Unauthorized action')
     @jwt_required()
     def put(self, review_id):
-        """Update a review's information with enhanced RBAC"""
-        review_data = api.payload
+        """Update a review's information - Admin bypass ownership restrictions"""
+        current_user = get_jwt_identity()
+        jwt_claims = get_jwt()
         
-        # Get comprehensive user info using RBAC utilities
-        user_info = get_current_user_info()
-        current_user_id = user_info['user_id']
-        is_admin = user_info['is_admin']
-        
+        # Enhanced admin privilege check using both identity and claims
+        is_admin = current_user.get('is_admin', False) or jwt_claims.get('is_admin', False)
+        user_id = current_user.get('id')
+
+        # Get the review data from request
+        review_data = request.json
+        if not review_data:
+            return {'error': 'No data provided'}, 400
+
         # Get the existing review to check ownership
-        existing_review = facade.get_review(review_id)
-        if not existing_review:
+        review = facade.get_review(review_id)
+        if not review:
             return {'error': 'Review not found'}, 404
             
-        # Enhanced authorization check using RBAC
-        is_authorized, current_user, admin_status = check_admin_or_owner(existing_review.user.id)
-        if not is_authorized:
-            return {'error': 'Unauthorized action.'}, 403
-            
-        # Prevent changing user_id and place_id in updates
-        if 'user_id' in review_data and review_data['user_id'] != existing_review.user.id:
-            return {'error': 'Cannot change review ownership'}, 403
-        if 'place_id' in review_data and review_data['place_id'] != existing_review.place.id:
-            return {'error': 'Cannot change review place'}, 403
+        # Admin bypass ownership restrictions - exact implementation as specified
+        if not is_admin and review.user.id != user_id:
+            return {'error': 'Unauthorized action'}, 403
 
         try:
+            # Logic to update the review - comprehensive validation
+            
+            # Prevent changing user_id and place_id in updates
+            if 'user_id' in review_data and review_data['user_id'] != review.user.id:
+                return {'error': 'Cannot change review ownership'}, 403
+            if 'place_id' in review_data and review_data['place_id'] != review.place.id:
+                return {'error': 'Cannot change review place'}, 403
+            
+            # Update the review using facade
             updated_review = facade.update_review(review_id, review_data)
-            if not updated_review:
-                return {'error': 'Review not found'}, 404
 
-            return {
+            if not updated_review:
+                return {'error': 'Failed to update review'}, 400
+
+            # Prepare response with admin bypass tracking
+            response_data = {
                 'id': updated_review.id,
                 'text': updated_review.comment,
                 'rating': updated_review.rating,
                 'user_id': updated_review.user.id,
                 'place_id': updated_review.place.id,
                 'created_at': updated_review.created_at.isoformat(),
-                'updated_at': updated_review.updated_at.isoformat(),
-                'message': 'Review successfully updated',
-                'updated_by_admin': admin_status
-            }, 200
-        except ValueError as e:
-            return {'error': str(e)}, 400
+                'updated_at': updated_review.updated_at.isoformat()
+            }
+
+            # Add admin modification tracking if admin performed the update
+            if is_admin and review.user.id != user_id:
+                response_data['message'] = 'Review successfully modified by administrator'
+                response_data['updated_by_admin'] = True
+            else:
+                response_data['message'] = 'Review successfully updated'
+
+            return response_data, 200
+        except ValueError as ve:
+            return {'error': f'Invalid data: {str(ve)}'}, 400
         except Exception as e:
-            return {'error': f'Update failed: {str(e)}'}, 400
+            return {'error': f'Update failed: {str(e)}'}, 500
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     @api.response(403, 'Forbidden - Unauthorized action')
     @jwt_required()
     def delete(self, review_id):
-        """Delete a review with enhanced RBAC"""
-        # Get comprehensive user info using RBAC utilities
-        user_info = get_current_user_info()
-        current_user_id = user_info['user_id']
-        is_admin = user_info['is_admin']
+        """Delete a review - Admin bypass ownership restrictions"""
+        current_user = get_jwt_identity()
+        jwt_claims = get_jwt()
+        
+        # Enhanced admin privilege check using both identity and claims
+        is_admin = current_user.get('is_admin', False) or jwt_claims.get('is_admin', False)
+        user_id = current_user.get('id')
         
         # Get the existing review to check ownership
-        existing_review = facade.get_review(review_id)
-        if not existing_review:
+        review = facade.get_review(review_id)
+        if not review:
             return {'error': 'Review not found'}, 404
             
-        # Enhanced authorization check using RBAC
-        is_authorized, current_user, admin_status = check_admin_or_owner(existing_review.user.id)
-        if not is_authorized:
-            return {'error': 'Unauthorized action.'}, 403
+        # Admin bypass ownership restrictions - exact implementation as specified
+        if not is_admin and review.user.id != user_id:
+            return {'error': 'Unauthorized action'}, 403
         
-        success = facade.delete_review(review_id)
-        if not success:
-            return {'error': 'Review not found'}, 404
+        try:
+            # Delete the review using facade
+            success = facade.delete_review(review_id)
+            if not success:
+                return {'error': 'Failed to delete review'}, 400
             
-        return {
-            'message': 'Review deleted successfully',
-            'deleted_by_admin': admin_status
-        }, 200
+            # Prepare response with admin bypass tracking
+            response_data = {'message': 'Review deleted successfully'}
+            
+            # Add admin deletion tracking if admin performed the deletion
+            if is_admin and review.user.id != user_id:
+                response_data['deleted_by_admin'] = True
+                response_data['message'] = 'Review deleted by administrator'
+            
+            return response_data, 200
+            
+        except Exception as e:
+            return {'error': f'Delete failed: {str(e)}'}, 500
 
 
 @api.route('/places/<place_id>/reviews')
