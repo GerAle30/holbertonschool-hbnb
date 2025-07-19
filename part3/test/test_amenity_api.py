@@ -220,13 +220,13 @@ def test_amenity_api_endpoints():
         for amenity in final_amenities:
             print(f"     - {amenity['name']} (ID: {amenity['id'][:8]}...)")
 
-    print("\n🎉 All amenity API tests passed!")
+    print("\n[SUCCESS] All amenity API tests passed!")
     return True
 
 
 def test_api_integration():
     """Test API integration with other components"""
-    print("\n🔗 Testing API Integration...")
+    print("\n[INTEGRATION] Testing API Integration...")
 
     app = create_app()
     client = app.test_client()
@@ -269,63 +269,63 @@ def test_api_integration():
     print(f"   ✓ 10 GET requests completed")
     print(f"   ⚡ Average response time: {avg_time:.2f} ms")
 
-    print("\n🎉 All integration tests passed!")
+    print("\n[SUCCESS] All integration tests passed!")
     return True
 
 
 def print_api_documentation():
     """Print comprehensive API documentation"""
     print("\n" + "=" * 80)
-    print("📚 AMENITY API ENDPOINTS DOCUMENTATION")
+    print("[DOCS] AMENITY API ENDPOINTS DOCUMENTATION")
     print("=" * 80)
     print("""
-🔗 BASE URL: /api/v1/amenities
+BASE URL: /api/v1/amenities
 
-📋 AVAILABLE ENDPOINTS:
+AVAILABLE ENDPOINTS:
 
-1️⃣  POST /api/v1/amenities/
-   📝 Description: Create a new amenity
-   📨 Request Body: {"name": "string (required)"}
-   📤 Success Response (201):
+1. POST /api/v1/amenities/
+   Description: Create a new amenity
+   Request Body: {"name": "string (required)"}
+   Success Response (201):
       {
         "id": "uuid-string",
         "name": "string",
         "created_at": "ISO-datetime",
         "updated_at": "ISO-datetime"
       }
-   ❌ Error Responses:
+   Error Responses:
       400 - Missing required field: name
       400 - Name cannot be empty
       400 - Invalid input data
 
-2️⃣  GET /api/v1/amenities/
-   📝 Description: Retrieve all amenities
-   📤 Success Response (200): Array of amenity objects
-   ❌ Error Response: 500 - Server error
+2. GET /api/v1/amenities/
+   Description: Retrieve all amenities
+   Success Response (200): Array of amenity objects
+   Error Response: 500 - Server error
 
-3️⃣  GET /api/v1/amenities/<amenity_id>
-   📝 Description: Retrieve specific amenity by ID
-   📤 Success Response (200): Single amenity object
-   ❌ Error Responses:
+3. GET /api/v1/amenities/<amenity_id>
+   Description: Retrieve specific amenity by ID
+   Success Response (200): Single amenity object
+   Error Responses:
       404 - Amenity not found
       500 - Server error
 
-4️⃣  PUT /api/v1/amenities/<amenity_id>
-   📝 Description: Update amenity information
-   📨 Request Body: {"name": "string (required)"}
-   📤 Success Response (200): Updated amenity object
-   ❌ Error Responses:
+4. PUT /api/v1/amenities/<amenity_id>
+   Description: Update amenity information
+   Request Body: {"name": "string (required)"}
+   Success Response (200): Updated amenity object
+   Error Responses:
       400 - Missing required field: name
       400 - Name cannot be empty
       404 - Amenity not found
       500 - Server error
 
-🎯 VALIDATION RULES:
+VALIDATION RULES:
    • name: Required, non-empty string
    • Whitespace-only names are rejected
    • All responses include timestamps
 
-💡 EXAMPLE USAGE:
+EXAMPLE USAGE:
    # Create amenity
    curl -X POST http://localhost:5000/api/v1/amenities/ \\
         -H "Content-Type: application/json" \\

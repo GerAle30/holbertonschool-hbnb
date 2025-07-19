@@ -25,33 +25,33 @@ def check_server_status():
 
 def display_swagger_info():
     """Display information about accessing Swagger documentation"""
-    print("📋 Swagger Documentation Access")
+    print("[DOCS] Swagger Documentation Access")
     print("=" * 50)
     print("Your Flask-RESTx API automatically generates Swagger documentation.")
     print()
-    print("🌐 Access URLs:")
+    print("[INFO] Access URLs:")
     print("  • Swagger UI: http://127.0.0.1:5001/api/v1/")
     print("  • JSON Spec: http://127.0.0.1:5001/api/v1/swagger.json")
     print()
-    print("📝 What you'll find in Swagger:")
-    print("  ✅ Complete API documentation")
-    print("  ✅ Interactive endpoint testing")
-    print("  ✅ Request/response schemas")
-    print("  ✅ Model definitions")
-    print("  ✅ Example requests and responses")
+    print("[INFO] What you'll find in Swagger:")
+    print("  [+] Complete API documentation")
+    print("  [+] Interactive endpoint testing")
+    print("  [+] Request/response schemas")
+    print("  [+] Model definitions")
+    print("  [+] Example requests and responses")
     print()
     
     if check_server_status():
-        print("✅ Server is running - you can access Swagger now!")
+        print("[SUCCESS] Server is running - you can access Swagger now!")
         print("   Open: http://127.0.0.1:5001/api/v1/ in your browser")
     else:
-        print("⚠️  Server not running. Start it with: python run.py")
+        print("[WARNING] Server not running. Start it with: python run.py")
         print("   Then access: http://127.0.0.1:5001/api/v1/")
     print()
 
 def run_specific_test_class(test_class_name):
     """Run a specific test class"""
-    print(f"🧪 Running {test_class_name} tests...")
+    print(f"[TEST] Running {test_class_name} tests...")
     
     # Import the test module
     from tests.test_api_endpoints import (
@@ -76,13 +76,13 @@ def run_specific_test_class(test_class_name):
         result = runner.run(suite)
         return result
     else:
-        print(f"❌ Unknown test class: {test_class_name}")
+        print(f"[ERROR] Unknown test class: {test_class_name}")
         print("Available classes: users, amenities, places, reviews, integration")
         return None
 
 def run_all_tests():
     """Run all test suites"""
-    print("🧪 Running Complete Test Suite")
+    print("[TEST] Running Complete Test Suite")
     print("=" * 50)
     
     # Discover and run all tests
@@ -104,7 +104,7 @@ def run_all_tests():
     
     # Print summary
     print("\n" + "=" * 50)
-    print("📊 Test Summary")
+    print("[SUMMARY] Test Summary")
     print("=" * 50)
     print(f"Tests run: {result.testsRun}")
     print(f"Failures: {len(result.failures)}")
@@ -113,25 +113,25 @@ def run_all_tests():
     print(f"Duration: {end_time - start_time}")
     
     if result.failures:
-        print(f"\n❌ Failures ({len(result.failures)}):")
+        print(f"\n[FAIL] Failures ({len(result.failures)}):")
         for test, traceback in result.failures:
             print(f"  • {test}")
     
     if result.errors:
-        print(f"\n💥 Errors ({len(result.errors)}):")
+        print(f"\n[ERROR] Errors ({len(result.errors)}):")
         for test, traceback in result.errors:
             print(f"  • {test}")
     
     if result.wasSuccessful():
-        print("\n🎉 All tests passed!")
+        print("\n[SUCCESS] All tests passed!")
     else:
-        print(f"\n⚠️  Some tests failed. Check the output above for details.")
+        print(f"\n[WARNING] Some tests failed. Check the output above for details.")
     
     return result
 
 def run_validation_tests():
     """Run specific validation tests"""
-    print("🔍 Running Validation Tests")
+    print("[VALIDATION] Running Validation Tests")
     print("=" * 30)
     
     # Your specific validation test case
@@ -175,11 +175,11 @@ def run_validation_tests():
     ]
     
     if not check_server_status():
-        print("❌ Server not running. Please start with: python run.py")
+        print("[ERROR] Server not running. Please start with: python run.py")
         return
     
     for i, test in enumerate(validation_tests, 1):
-        print(f"\n📝 Test {i}: {test['name']}")
+        print(f"\n[TEST] Test {i}: {test['name']}")
         try:
             response = requests.post(
                 test['url'],
@@ -189,18 +189,18 @@ def run_validation_tests():
             )
             
             if response.status_code == test['expected_status']:
-                print(f"✅ PASS: Got expected status {response.status_code}")
+                print(f"[PASS] Got expected status {response.status_code}")
             else:
-                print(f"❌ FAIL: Expected {test['expected_status']}, got {response.status_code}")
+                print(f"[FAIL] Expected {test['expected_status']}, got {response.status_code}")
                 
             print(f"Response: {response.json()}")
             
         except Exception as e:
-            print(f"❌ ERROR: {e}")
+            print(f"[ERROR] {e}")
 
 def display_test_examples():
     """Display example curl commands for manual testing"""
-    print("🛠️  Manual Testing Examples")
+    print("[EXAMPLES] Manual Testing Examples")
     print("=" * 30)
     
     examples = [
@@ -244,13 +244,13 @@ def display_test_examples():
     ]
     
     for example in examples:
-        print(f"\n📝 {example['name']}:")
+        print(f"\n[EXAMPLE] {example['name']}:")
         print(example['command'])
         print()
 
 def main():
     """Main test runner function"""
-    print("🚀 HBnB API Test Suite")
+    print("[RUNNER] HBnB API Test Suite")
     print("=" * 50)
     
     if len(sys.argv) > 1:

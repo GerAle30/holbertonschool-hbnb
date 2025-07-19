@@ -19,10 +19,10 @@ def test_public_endpoint(method, endpoint, data=None):
         elif method.upper() == 'PUT':
             response = requests.put(url, json=data, timeout=5)
         else:
-            print(f"❌ Unsupported method: {method}")
+            print(f"[ERROR] Unsupported method: {method}")
             return False
             
-        print(f"✅ {method.upper()} {endpoint}")
+        print(f"[SUCCESS] {method.upper()} {endpoint}")
         print(f"   Status: {response.status_code}")
         print(f"   Response: {response.text[:100]}...")
         print()
@@ -30,7 +30,7 @@ def test_public_endpoint(method, endpoint, data=None):
         return response.status_code in [200, 201]
         
     except requests.exceptions.RequestException as e:
-        print(f"❌ {method.upper()} {endpoint} - Failed: {e}")
+        print(f"[FAIL] {method.upper()} {endpoint} - Failed: {e}")
         return False
 
 def test_protected_endpoint_without_auth(method, endpoint):
@@ -47,10 +47,10 @@ def test_protected_endpoint_without_auth(method, endpoint):
         elif method.upper() == 'DELETE':
             response = requests.delete(url, timeout=5)
         else:
-            print(f"❌ Unsupported method: {method}")
+            print(f"[ERROR] Unsupported method: {method}")
             return False
             
-        print(f"🔒 {method.upper()} {endpoint}")
+        print(f"[PROTECTED] {method.upper()} {endpoint}")
         print(f"   Status: {response.status_code}")
         print(f"   Response: {response.text[:100]}...")
         print()
@@ -58,7 +58,7 @@ def test_protected_endpoint_without_auth(method, endpoint):
         return response.status_code == 401
         
     except requests.exceptions.RequestException as e:
-        print(f"❌ {method.upper()} {endpoint} - Failed: {e}")
+        print(f"[FAIL] {method.upper()} {endpoint} - Failed: {e}")
         return False
 
 def main():
