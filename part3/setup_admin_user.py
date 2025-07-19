@@ -10,7 +10,7 @@ import hashlib
 
 def generate_sql_for_admin_user():
     """Generate SQL commands to create an admin user"""
-    print("🗄️  DATABASE DIRECT INSERT METHOD")
+    print("DATABASE DIRECT INSERT METHOD")
     print("="*50)
     
     # Generate a simple UUID (in production, use proper UUID generation)
@@ -22,7 +22,7 @@ def generate_sql_for_admin_user():
     # This is a simplified hash - your app should use bcrypt
     password_hash = hashlib.sha256(password.encode()).hexdigest()
     
-    print("\n📋 SQL Commands to create admin user:")
+    print("\nSQL Commands to create admin user:")
     print("="*50)
     
     # PostgreSQL version
@@ -57,7 +57,7 @@ VALUES (
 );
 """)
     
-    print(f"\n🔑 Admin Credentials:")
+    print(f"\nAdmin Credentials:")
     print(f"Email: admin@example.com")
     print(f"Password: {password}")
     print(f"User ID: {user_id}")
@@ -66,10 +66,10 @@ VALUES (
 
 def generate_python_setup_code():
     """Generate Python code to auto-create admin user"""
-    print("\n\n🔧 APPLICATION CODE METHOD") 
+    print("\n\nAPPLICATION CODE METHOD") 
     print("="*50)
     
-    print("\n📋 Add this code to your app startup (e.g., in app/__init__.py or main):")
+    print("\nAdd this code to your app startup (e.g., in app/__init__.py or main):")
     print("="*50)
     
     setup_code = '''
@@ -97,12 +97,12 @@ def ensure_admin_user_exists():
         }
         
         admin_user = facade.create_user(admin_user_data)
-        print(f"✅ Created admin user: {admin_email}")
-        print(f"🔑 Password: {admin_password}")
+        print(f"Created admin user: {admin_email}")
+        print(f"Password: {admin_password}")
         return admin_user
         
     except Exception as e:
-        print(f"❌ Failed to create admin user: {e}")
+        print(f"Failed to create admin user: {e}")
         return None
 
 # Call this function when your app starts
@@ -114,10 +114,10 @@ if __name__ == "__main__":
 
 def generate_environment_setup():
     """Generate environment variable setup"""
-    print("\n\n🌍 ENVIRONMENT VARIABLE METHOD")
+    print("\n\nENVIRONMENT VARIABLE METHOD")
     print("="*50)
     
-    print("\n📋 Set these environment variables:")
+    print("\nSet these environment variables:")
     print("="*30)
     
     env_setup = '''
@@ -130,7 +130,7 @@ export FLASK_ENV="development"
     
     print(env_setup)
     
-    print("\n📋 Add this code to your application startup:")
+    print("\nAdd this code to your application startup:")
     print("="*45)
     
     app_code = '''
@@ -154,7 +154,7 @@ def setup_admin_from_env():
             }
             
             admin = facade.create_user(admin_data)
-            print(f"🌍 Created admin from environment: {admin_email}")
+            print(f"Created admin from environment: {admin_email}")
 
 # Call during app initialization  
 setup_admin_from_env()
@@ -164,7 +164,7 @@ setup_admin_from_env()
 
 def test_admin_connection():
     """Test if we can connect to an admin user"""
-    print("\n\n🔍 TESTING EXISTING ADMIN CONNECTION")
+    print("\n\nTESTING EXISTING ADMIN CONNECTION")
     print("="*50)
     
     import requests
@@ -180,7 +180,7 @@ def test_admin_connection():
         {"email": "system@example.com", "password": "system123"}
     ]
     
-    print("\n🔄 Trying common admin credentials...")
+    print("\nTrying common admin credentials...")
     
     for i, creds in enumerate(test_credentials, 1):
         try:
@@ -199,26 +199,26 @@ def test_admin_connection():
                     is_admin = protected_data.get('is_admin', False)
                     
                     if is_admin:
-                        print(f"✅ Found working admin: {creds['email']}")
-                        print(f"🔑 Password: {creds['password']}")
-                        print(f"🎫 Token: {token[:30]}...")
+                        print(f"Found working admin: {creds['email']}")
+                        print(f"Password: {creds['password']}")
+                        print(f"Token: {token[:30]}...")
                         return creds['email'], creds['password'], token
                     else:
-                        print(f"🔍 {i}. {creds['email']}: Valid user but not admin")
+                        print(f"{i}. {creds['email']}: Valid user but not admin")
                 else:
-                    print(f"⚠️  {i}. {creds['email']}: Token verification failed")
+                    print(f"{i}. {creds['email']}: Token verification failed")
             else:
-                print(f"❌ {i}. {creds['email']}: Login failed ({response.status_code})")
+                print(f"{i}. {creds['email']}: Login failed ({response.status_code})")
                 
         except requests.exceptions.RequestException as e:
-            print(f"🌐 {i}. {creds['email']}: Connection error - {e}")
+            print(f"{i}. {creds['email']}: Connection error - {e}")
             
-    print("\n❌ No working admin credentials found")
+    print("\nNo working admin credentials found")
     return None, None, None
 
 def main():
     """Main setup function"""
-    print("🚀 ADMIN USER SETUP UTILITY")
+    print("ADMIN USER SETUP UTILITY")
     print("="*70)
     
     print("\nThis utility helps you create an admin user for testing admin endpoints.")
@@ -228,25 +228,25 @@ def main():
     email, password, token = test_admin_connection()
     
     if token:
-        print(f"\n✅ Great! You already have a working admin user.")
+        print(f"\nGreat! You already have a working admin user.")
         print(f"You can now run the admin endpoint tests with these credentials.")
         
         # Run quick curl test
-        print(f"\n📋 Quick test curl command:")
+        print(f"\nQuick test curl command:")
         print(f'curl -X GET "http://127.0.0.1:5000/api/v1/auth/protected" \\')
         print(f'  -H "Authorization: Bearer {token}"')
         
         return
     
-    print(f"\n⚠️  No working admin user found. Let's create one!")
+    print(f"\nNo working admin user found. Let's create one!")
     
     while True:
         print(f"\nChoose setup method:")
-        print(f"1. 🗄️  Database Direct Insert (SQL)")
-        print(f"2. 🔧 Application Code Method (Python)")  
-        print(f"3. 🌍 Environment Variable Method")
-        print(f"4. 🔍 Test Connection Again")
-        print(f"5. ❌ Exit")
+        print(f"1. Database Direct Insert (SQL)")
+        print(f"2. Application Code Method (Python)")  
+        print(f"3. Environment Variable Method")
+        print(f"4. Test Connection Again")
+        print(f"5. Exit")
         
         choice = input(f"\nEnter your choice (1-5): ").strip()
         
@@ -259,10 +259,10 @@ def main():
         elif choice == "4":
             test_admin_connection()
         elif choice == "5":
-            print(f"\n👋 Goodbye! Set up your admin user and run the tests when ready.")
+            print(f"\nGoodbye! Set up your admin user and run the tests when ready.")
             break
         else:
-            print(f"❌ Invalid choice. Please enter 1-5.")
+            print(f"Invalid choice. Please enter 1-5.")
             
         input(f"\nPress Enter to continue...")
 

@@ -136,19 +136,19 @@ def test_admin_endpoints():
     if response.status_code == 201:
         created_user = response.json()
         new_user_id = created_user.get('id')
-        print(f"✅ SUCCESS: User created with ID {new_user_id}")
+        print(f"SUCCESS: User created with ID {new_user_id}")
         print(f"Response: {json.dumps(created_user, indent=2)}")
         test_results.append(("Create User", "PASS", created_user))
         
         # Equivalent curl command
-        print(f"\n📋 Equivalent curl command:")
+        print(f"\nEquivalent curl command:")
         print(f"curl -X POST \"{BASE_URL}/users/\" \\")
         print(f"  -d '{json.dumps(new_user_data)}' \\")
         print(f"  -H \"Authorization: Bearer {admin_token}\" \\")
         print(f"  -H \"Content-Type: application/json\"")
         
     else:
-        print(f"❌ FAILED: {response.status_code}")
+        print(f"FAILED: {response.status_code}")
         print(f"Error: {response.text}")
         test_results.append(("Create User", "FAIL", response.text))
         new_user_id = None
@@ -173,23 +173,23 @@ def test_admin_endpoints():
         
         if response.status_code == 200:
             updated_user = response.json()
-            print(f"✅ SUCCESS: User updated")
+            print(f"SUCCESS: User updated")
             print(f"Response: {json.dumps(updated_user, indent=2)}")
             test_results.append(("Update User", "PASS", updated_user))
             
             # Equivalent curl command
-            print(f"\n📋 Equivalent curl command:")
+            print(f"\nEquivalent curl command:")
             print(f"curl -X PUT \"{BASE_URL}/users/{new_user_id}\" \\")
             print(f"  -d '{json.dumps(update_data)}' \\") 
             print(f"  -H \"Authorization: Bearer {admin_token}\" \\")
             print(f"  -H \"Content-Type: application/json\"")
             
         else:
-            print(f"❌ FAILED: {response.status_code}")
+            print(f"FAILED: {response.status_code}")
             print(f"Error: {response.text}")
             test_results.append(("Update User", "FAIL", response.text))
     else:
-        print("⏭️  SKIPPED: No user ID from previous test")
+        print("SKIPPED: No user ID from previous test")
         test_results.append(("Update User", "SKIP", "No user created"))
     
     # Test 3: Add a New Amenity as an Admin
@@ -208,19 +208,19 @@ def test_admin_endpoints():
     if response.status_code == 201:
         created_amenity = response.json()
         amenity_id = created_amenity.get('id')
-        print(f"✅ SUCCESS: Amenity created with ID {amenity_id}")
+        print(f"SUCCESS: Amenity created with ID {amenity_id}")
         print(f"Response: {json.dumps(created_amenity, indent=2)}")
         test_results.append(("Create Amenity", "PASS", created_amenity))
         
         # Equivalent curl command
-        print(f"\n📋 Equivalent curl command:")
+        print(f"\nEquivalent curl command:")
         print(f"curl -X POST \"{BASE_URL}/amenities/\" \\")
         print(f"  -d '{json.dumps(amenity_data)}' \\")
         print(f"  -H \"Authorization: Bearer {admin_token}\" \\")
         print(f"  -H \"Content-Type: application/json\"")
         
     else:
-        print(f"❌ FAILED: {response.status_code}")
+        print(f"FAILED: {response.status_code}")
         print(f"Error: {response.text}")
         test_results.append(("Create Amenity", "FAIL", response.text))
         amenity_id = None
@@ -241,23 +241,23 @@ def test_admin_endpoints():
         
         if response.status_code == 200:
             updated_amenity = response.json()
-            print(f"✅ SUCCESS: Amenity updated")
+            print(f"SUCCESS: Amenity updated")
             print(f"Response: {json.dumps(updated_amenity, indent=2)}")
             test_results.append(("Update Amenity", "PASS", updated_amenity))
             
             # Equivalent curl command
-            print(f"\n📋 Equivalent curl command:")
+            print(f"\nEquivalent curl command:")
             print(f"curl -X PUT \"{BASE_URL}/amenities/{amenity_id}\" \\")
             print(f"  -d '{json.dumps(amenity_update)}' \\")
             print(f"  -H \"Authorization: Bearer {admin_token}\" \\")
             print(f"  -H \"Content-Type: application/json\"")
             
         else:
-            print(f"❌ FAILED: {response.status_code}")
+            print(f"FAILED: {response.status_code}")
             print(f"Error: {response.text}")
             test_results.append(("Update Amenity", "FAIL", response.text))
     else:
-        print("⏭️  SKIPPED: No amenity ID from previous test")
+        print("SKIPPED: No amenity ID from previous test")
         test_results.append(("Update Amenity", "SKIP", "No amenity created"))
     
     # Test 5: Test Admin Bypass - Modify Another User's Place
@@ -313,12 +313,12 @@ def test_admin_endpoints():
                 
                 if response.status_code == 200:
                     updated_place = response.json()
-                    print(f"✅ SUCCESS: Admin bypassed ownership to modify place")
+                    print(f"SUCCESS: Admin bypassed ownership to modify place")
                     print(f"Modified by admin: {updated_place.get('modified_by_admin')}")
                     print(f"Response: {json.dumps(updated_place, indent=2)}")
                     test_results.append(("Admin Bypass Place", "PASS", updated_place))
                 else:
-                    print(f"❌ FAILED: {response.status_code}")
+                    print(f"FAILED: {response.status_code}")
                     print(f"Error: {response.text}")
                     test_results.append(("Admin Bypass Place", "FAIL", response.text))
     
@@ -332,20 +332,20 @@ def test_admin_endpoints():
     skipped = sum(1 for _, result, _ in test_results if result == "SKIP")
     
     for test_name, result, data in test_results:
-        status_icon = "✅" if result == "PASS" else "❌" if result == "FAIL" else "⏭️"
-        print(f"{status_icon} {test_name}: {result}")
+        status_icon = "PASS" if result == "PASS" else "FAIL" if result == "FAIL" else "SKIP"
+        print(f"[{status_icon}] {test_name}: {result}")
     
-    print(f"\n📊 Results: {passed} passed, {failed} failed, {skipped} skipped")
+    print(f"\nResults: {passed} passed, {failed} failed, {skipped} skipped")
     
     if failed > 0:
-        print("\n🔧 Troubleshooting Tips:")
+        print("\nTroubleshooting Tips:")
         print("- Ensure the API server is running on http://127.0.0.1:5000")
         print("- Verify admin user exists in database") 
         print("- Check JWT token is valid and contains is_admin=true")
         print("- Validate all required fields are provided in requests")
     
     # Cleanup
-    print("\n🧹 Cleanup...")
+    print("\nCleanup...")
     if new_user_id:
         requests.delete(f"{BASE_URL}/users/{new_user_id}", headers=admin_headers)
         print("Cleaned up test user")
@@ -361,7 +361,7 @@ def show_admin_setup_guide():
     print("ADMIN USER SETUP STRATEGIES")
     print("="*70)
     
-    print("\n🗄️  STRATEGY 1: Database Direct Insert")
+    print("\nSTRATEGY 1: Database Direct Insert")
     print("Connect directly to your database and insert an admin user:")
     print("""
     -- PostgreSQL/SQLite example
@@ -378,7 +378,7 @@ def show_admin_setup_guide():
     );
     """)
     
-    print("\n🔧 STRATEGY 2: Modify Application Code")
+    print("\nSTRATEGY 2: Modify Application Code")
     print("Add auto-admin creation in facade.py or models:")
     print("""
     # In facade.py or startup code
@@ -396,7 +396,7 @@ def show_admin_setup_guide():
             print(f"Created admin user: {admin_email}")
     """)
     
-    print("\n🌍 STRATEGY 3: Environment Variables")
+    print("\nSTRATEGY 3: Environment Variables")
     print("Use environment variables to define admin credentials:")
     print("""
     # Set environment variables
@@ -409,7 +409,7 @@ def show_admin_setup_guide():
         create_admin_user()
     """)
     
-    print("\n⚙️  STRATEGY 4: CLI Command")
+    print("\nSTRATEGY 4: CLI Command")
     print("Create a management command:")
     print("""
     # create_admin.py
@@ -431,14 +431,14 @@ def show_admin_setup_guide():
         create_admin_user(sys.argv[1], sys.argv[2])
     """)
     
-    print("\n🎯 RECOMMENDED APPROACH:")
+    print("\nRECOMMENDED APPROACH:")
     print("1. Use Strategy 2 (modify application) for development")
     print("2. Use Strategy 1 (database insert) for production")
     print("3. Use Strategy 4 (CLI command) for deployment scripts")
 
 
 if __name__ == "__main__":
-    print("🔐 Admin Endpoints Testing Tool")
+    print("Admin Endpoints Testing Tool")
     print("="*70)
     
     # First show the setup guide
@@ -451,9 +451,9 @@ if __name__ == "__main__":
     if user_input == 'y':
         success = test_admin_endpoints()
         if success:
-            print("\n🎉 Admin endpoints testing completed successfully!")
+            print("\nAdmin endpoints testing completed successfully!")
         else:
-            print("\n⚠️  Some tests failed. Check the output above for details.")
+            print("\nSome tests failed. Check the output above for details.")
     else:
-        print("\n📝 Please set up an admin user using one of the strategies above, then run this script again.")
-        print("💡 Quick setup: Modify your user creation code to auto-create admin@example.com as admin")
+        print("\nPlease set up an admin user using one of the strategies above, then run this script again.")
+        print("Quick setup: Modify your user creation code to auto-create admin@example.com as admin")

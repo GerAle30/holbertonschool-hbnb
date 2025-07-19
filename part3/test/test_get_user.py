@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def test_get_all_users_logic():
     """Test the business logic for retrieving all users"""
-    print("🔧 Testing Retrieve All Users - Business Logic...")
+    print(" Testing Retrieve All Users - Business Logic...")
 
     # Create facade instance
     facade = HBnBFacade()
@@ -126,13 +126,13 @@ def test_get_all_users_logic():
     print(f"   ✓ 100 retrievals completed in {elapsed:.4f} seconds")
     print(f"   ✓ Average retrieval time: {(elapsed / 100) * 1000:.2f} ms")
 
-    print("\n🎉 All business logic tests passed!")
+    print("\n All business logic tests passed!")
     return True, created_users
 
 
 def test_get_all_users_api():
     """Test the HTTP API for retrieving all users"""
-    print("\n🌐 Testing Retrieve All Users - HTTP API...")
+    print("\n Testing Retrieve All Users - HTTP API...")
 
     # Create Flask app
     app = create_app()
@@ -207,7 +207,7 @@ def test_get_all_users_api():
             print(f"   ✓ User count verification passed")
         else:
             print(
-                f"   ⚠️  User count: expected {expected_count}, got {
+                f"     User count: expected {expected_count}, got {
                     len(all_users)}")
             # This might be expected if other tests ran before
     else:
@@ -278,7 +278,7 @@ def test_get_all_users_api():
             print(f"   ✗ Duplicate user emails detected")
             return False
 
-    print("\n🎉 All HTTP API tests passed!")
+    print("\n All HTTP API tests passed!")
     return True, all_users
 
 
@@ -337,7 +337,7 @@ def test_edge_cases():
                     response_size /
                     len(users):.1f}")
 
-    print("\n🎉 All edge case tests passed!")
+    print("\n All edge case tests passed!")
     return True
 
 
@@ -349,7 +349,7 @@ def print_api_documentation():
     print("""
 🔗 ENDPOINT: GET /api/v1/users/
 
-📋 DESCRIPTION:
+ DESCRIPTION:
    Retrieves a list of all users in the system
 
 📨 REQUEST FORMAT:
@@ -360,7 +360,7 @@ def print_api_documentation():
 
 📤 RESPONSE FORMATS:
 
-   ✅ SUCCESS (200 OK):
+    SUCCESS (200 OK):
    [
      {
        "id": "uuid-string",
@@ -379,7 +379,7 @@ def print_api_documentation():
    📝 EMPTY LIST (200 OK):
    []
 
-🔍 FEATURES:
+ FEATURES:
    • Returns all users in the system
    • Each user object contains: id, first_name, last_name, email
    • Returns empty array if no users exist
@@ -405,7 +405,7 @@ def print_api_documentation():
      }
    ]
 
-💡 USE CASES:
+ USE CASES:
    • User management dashboards
    • User selection dropdowns
    • Admin user overview
@@ -441,8 +441,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print(f"\n�� ALL TESTS PASSED! Retrieve List of Users endpoint is fully functional!")
-    print(f"📊 Business Logic: Created and verified {len(users)} users")
-    print(f"🌐 HTTP API: Retrieved list of {len(all_users)} total users")
+    print(f" Business Logic: Created and verified {len(users)} users")
+    print(f" HTTP API: Retrieved list of {len(all_users)} total users")
     print(f"🧪 Edge Cases: All scenarios handled correctly")
     print(f"✨ Ready for production use!")
 

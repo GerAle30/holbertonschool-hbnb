@@ -134,7 +134,7 @@ def test_create_user():
         print("   ✗ User data integrity check failed")
         return False
 
-    print("\n🎉 All tests passed! Create User endpoint is working correctly.")
+    print("\n All tests passed! Create User endpoint is working correctly.")
     return True
 
 

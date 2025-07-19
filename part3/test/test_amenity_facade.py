@@ -13,7 +13,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def test_amenity_facade_methods():
     """Test all amenity-related methods in the HBnBFacade"""
-    print("🔧 Testing Amenity Methods in HBnBFacade...")
+    print(" Testing Amenity Methods in HBnBFacade...")
 
     # Create facade instance
     facade = HBnBFacade()
@@ -182,11 +182,11 @@ def test_amenity_facade_methods():
     final_amenities = facade.get_all_amenities()
     print(f"   ✓ Final amenity count: {len(final_amenities)}")
 
-    print(f"   📋 All amenities in system:")
+    print(f"    All amenities in system:")
     for amenity in final_amenities:
         print(f"     - {amenity.name} (ID: {amenity.id[:8]}...)")
 
-    print("\n🎉 All amenity facade tests passed!")
+    print("\n All amenity facade tests passed!")
     return True
 
 
@@ -225,7 +225,7 @@ def test_amenity_model():
         print(f"   ✗ Error with empty name: {e}")
         return False
 
-    print("\n🎉 Amenity model tests passed!")
+    print("\n Amenity model tests passed!")
     return True
 
 
@@ -235,22 +235,22 @@ def print_amenity_summary():
     print("📚 AMENITY FUNCTIONALITY SUMMARY")
     print("=" * 70)
     print("""
-✅ IMPLEMENTED METHODS IN HBnBFacade:
+ IMPLEMENTED METHODS IN HBnBFacade:
 
 🏗️  create_amenity(amenity_data)
     • Creates new Amenity instance
     • Stores in amenity repository
     • Returns created amenity object
 
-🔍 get_amenity(amenity_id)
+ get_amenity(amenity_id)
     • Retrieves amenity by ID
     • Returns amenity object or None
 
-📋 get_all_amenities()
+ get_all_amenities()
     • Retrieves all amenities from repository
     • Returns list of amenity objects
 
-🔄 update_amenity(amenity_id, amenity_data)
+ update_amenity(amenity_id, amenity_data)
     • Updates existing amenity
     • Returns updated amenity or None if not found
 
@@ -265,7 +265,7 @@ def print_amenity_summary():
     • Timestamp tracking (created_at, updated_at)
     • Simple name-based amenity structure
 
-🎯 USE CASES:
+ USE CASES:
     • Hotel/accommodation amenity management
     • Place feature tracking
     • Search and filtering by amenities

@@ -18,7 +18,7 @@ This documentation serves as a foundation for future development phases by clear
 
 ## 🧱 1. High-Level Architecture
 
-### 🎯 Objective
+###  Objective
 
 Visualize the system's **three-layer architecture**:
 1. **Presentation Layer** – User-facing services and APIs
@@ -67,7 +67,7 @@ This documentation serves as a foundation for future development phases by clear
 
 ## 🧱 1. High-Level Architecture
 
-### 🎯 Objective
+###  Objective
 
 Visualize the system's **three-layer architecture**:
 1. **Presentation Layer** – User-facing services and APIs
@@ -76,7 +76,7 @@ Visualize the system's **three-layer architecture**:
 
 🧠 2. Business Logic Class Diagram
 
-🎯 Objective
+ Objective
 Define entities with attributes, behaviors, and relationships.
 
 📘 Class Diagram
@@ -126,9 +126,9 @@ classDiagram
     User --> "0..*" Review : writes >
     Place --> "0..*" Amenity : includes >
 
-🔄 3. API Sequence Diagrams
+ 3. API Sequence Diagrams
 
-🎯 Objective
+ Objective
 Depict how system layers interact to handle API calls.
 
 🧑‍💻 User Registration

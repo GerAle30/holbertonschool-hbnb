@@ -126,13 +126,13 @@ def test_get_all_users_logic():
     print(f"   ✓ 100 retrievals completed in {elapsed:.4f} seconds")
     print(f"   ✓ Average retrieval time: {(elapsed / 100) * 1000:.2f} ms")
 
-    print("\n🎉 All business logic tests passed!")
+    print("\n All business logic tests passed!")
     return True, created_users
 
 
 def test_get_all_users_api():
     """Test the HTTP API for retrieving all users"""
-    print("\n🌐 Testing Retrieve All Users - HTTP API...")
+    print("\n Testing Retrieve All Users - HTTP API...")
 
     # Create Flask app
     app = create_app()
@@ -207,7 +207,7 @@ def test_get_all_users_api():
             print(f"   ✓ User count verification passed")
         else:
             print(
-                f"   ⚠️  User count: expected {expected_count}, got {
+                f"     User count: expected {expected_count}, got {
                     len(all_users)}")
             # This might be expected if other tests ran before
     else:
@@ -278,7 +278,7 @@ def test_get_all_users_api():
             print(f"   ✗ Duplicate user emails detected")
             return False
 
-    print("\n🎉 All HTTP API tests passed!")
+    print("\n All HTTP API tests passed!")
     return True, all_users
 
 
@@ -337,7 +337,7 @@ def test_get_all_users_api():
                     response_size /
                     len(users):.1f}")
 
-    print("\n🎉 All edge case tests passed!")
+    print("\n All edge case tests passed!")
     return True
 
 

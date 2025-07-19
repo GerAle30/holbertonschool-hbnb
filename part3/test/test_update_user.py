@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def test_update_user_logic():
     """Test the business logic for updating users"""
-    print("🔧 Testing Update User - Business Logic...")
+    print(" Testing Update User - Business Logic...")
 
     # Create facade instance
     facade = HBnBFacade()
@@ -147,13 +147,13 @@ def test_update_user_logic():
         print(f"   ✗ Data integrity check failed")
         return False
 
-    print("\n🎉 All business logic tests passed!")
+    print("\n All business logic tests passed!")
     return True, user_id, second_user_id
 
 
 def test_update_user_api():
     """Test the HTTP API for updating users"""
-    print("\n🌐 Testing Update User - HTTP API...")
+    print("\n Testing Update User - HTTP API...")
 
     # Create Flask app
     app = create_app()
@@ -334,7 +334,7 @@ def test_update_user_api():
             print(f"   ✓ Correctly rejected {test_case['description']}")
         else:
             print(
-                f"   ⚠️  Expected 400 for {
+                f"     Expected 400 for {
                     test_case['description']}, got {
                     response.status_code}")
 
@@ -361,7 +361,7 @@ def test_update_user_api():
         print(f"   ✗ Partial update failed")
         return False
 
-    print("\n🎉 All HTTP API tests passed!")
+    print("\n All HTTP API tests passed!")
     return True, user_id
 
 
@@ -440,7 +440,7 @@ def test_edge_cases():
                               content_type='application/json')
         print(f"   ✓ Long field values: Status {response.status_code}")
 
-    print("\n🎉 All edge case tests completed!")
+    print("\n All edge case tests completed!")
     return True
 
 

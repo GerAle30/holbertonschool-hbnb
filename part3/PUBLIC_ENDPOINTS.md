@@ -2,7 +2,7 @@
 
 This document lists all API endpoints that are publicly accessible without JWT authentication.
 
-## 🌍 Public Endpoints Overview
+##  Public Endpoints Overview
 
 These endpoints can be accessed without including an `Authorization` header in the request.
 
@@ -133,7 +133,7 @@ These endpoints can be accessed without including an `Authorization` header in t
     -d '{"name": "Olympic Swimming Pool"}'
   ```
 
-### 🔐 Authentication
+###  Authentication
 
 #### **POST /api/v1/auth/login**
 - **Description**: User authentication (login)
@@ -191,7 +191,7 @@ curl -X GET "http://127.0.0.1:5000/api/v1/reviews/"
 curl -X GET "http://127.0.0.1:5000/api/v1/amenities/"
 ```
 
-## 🎯 Key Points
+##  Key Points
 
 1. **No Authentication Required**: These endpoints work without JWT tokens
 2. **Read-Only Access**: Most public endpoints are for data retrieval

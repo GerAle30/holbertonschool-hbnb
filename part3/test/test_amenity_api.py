@@ -13,7 +13,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def test_amenity_api_endpoints():
     """Test all amenity API endpoints"""
-    print("🌐 Testing Amenity API Endpoints...")
+    print(" Testing Amenity API Endpoints...")
 
     # Create Flask app
     app = create_app()
@@ -184,7 +184,7 @@ def test_amenity_api_endpoints():
         print(f"   ✓ Empty name validation working")
     else:
         print(
-            f"   ⚠️  Expected 400 for empty name, got {
+            f"     Expected 400 for empty name, got {
                 response.status_code}")
 
     # Test missing name
@@ -195,7 +195,7 @@ def test_amenity_api_endpoints():
         print(f"   ✓ Missing name validation working")
     else:
         print(
-            f"   ⚠️  Expected 400 for missing name, got {
+            f"     Expected 400 for missing name, got {
                 response.status_code}")
 
     # Test invalid JSON
@@ -206,7 +206,7 @@ def test_amenity_api_endpoints():
         print(f"   ✓ Invalid JSON handled correctly")
     else:
         print(
-            f"   ⚠️  Expected 400 for invalid JSON, got {
+            f"     Expected 400 for invalid JSON, got {
                 response.status_code}")
 
     # Test 7: Verify final state
@@ -216,7 +216,7 @@ def test_amenity_api_endpoints():
         final_amenities = json.loads(response.data)
         print(f"   ✓ Final amenity count: {len(final_amenities)}")
 
-        print(f"   📋 All amenities in system:")
+        print(f"    All amenities in system:")
         for amenity in final_amenities:
             print(f"     - {amenity['name']} (ID: {amenity['id'][:8]}...)")
 

@@ -150,7 +150,7 @@ def test_api_create_user():
                 response.status_code}")
         return False
 
-    print("\n🎉 All API tests passed! Create User endpoint is fully functional via HTTP!")
+    print("\n All API tests passed! Create User endpoint is fully functional via HTTP!")
     return True
 
 

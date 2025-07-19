@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def test_get_user_by_id_logic():
     """Test the business logic for user retrieval by ID"""
-    print("🔧 Testing User Retrieval by ID - Business Logic...")
+    print(" Testing User Retrieval by ID - Business Logic...")
 
     # Create facade instance
     facade = HBnBFacade()
@@ -119,13 +119,13 @@ def test_get_user_by_id_logic():
     print(f"   ✓ 300 retrievals completed in {elapsed:.4f} seconds")
     print(f"   ✓ Average retrieval time: {(elapsed / 300) * 1000:.2f} ms")
 
-    print("\n🎉 All business logic tests passed!")
+    print("\n All business logic tests passed!")
     return True, created_users
 
 
 def test_get_user_by_id_api():
     """Test the HTTP API for user retrieval by ID"""
-    print("\n🌐 Testing User Retrieval by ID - HTTP API...")
+    print("\n Testing User Retrieval by ID - HTTP API...")
 
     # Create Flask app
     app = create_app()
@@ -253,9 +253,9 @@ def test_get_user_by_id_api():
                         f"   ✓ Response correctly excludes sensitive field: '{field}'")
                 else:
                     print(
-                        f"   ⚠️  Response contains sensitive field: '{field}'")
+                        f"     Response contains sensitive field: '{field}'")
 
-    print("\n🎉 All HTTP API tests passed!")
+    print("\n All HTTP API tests passed!")
     return True
 
 
@@ -267,7 +267,7 @@ def print_api_documentation():
     print("""
 🔗 ENDPOINT: GET /api/v1/users/<user_id>
 
-📋 DESCRIPTION:
+ DESCRIPTION:
    Retrieves a specific user by their unique ID
 
 �� REQUEST FORMAT:
@@ -279,7 +279,7 @@ def print_api_documentation():
 
 📤 RESPONSE FORMATS:
 
-   ✅ SUCCESS (200 OK):
+    SUCCESS (200 OK):
    {
      "id": "uuid-string",
      "first_name": "string",
@@ -287,12 +287,12 @@ def print_api_documentation():
      "email": "string"
    }
 
-   ❌ ERROR (404 Not Found):
+    ERROR (404 Not Found):
    {
      "error": "User not found"
    }
 
-🔍 VALIDATION RULES:
+ VALIDATION RULES:
    • user_id must be provided in the URL path
    • Returns 404 if user doesn't exist
    • Returns clean user data without sensitive information
@@ -308,7 +308,7 @@ def print_api_documentation():
      "email": "john.doe@example.com"
    }
 
-💡 INTEGRATION TIPS:
+ INTEGRATION TIPS:
    • Use this endpoint after creating a user to verify creation
    • Combine with user creation for user profile pages
    • Perfect for user authentication and profile management
@@ -331,8 +331,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print(f"\n🎊 ALL TESTS PASSED! Retrieve User by ID endpoint is fully functional!")
-    print(f"📊 Created and tested {len(users)} users via business logic")
-    print(f"🌐 Verified complete HTTP API functionality")
+    print(f" Created and tested {len(users)} users via business logic")
+    print(f" Verified complete HTTP API functionality")
     print(f"✨ Ready for production use!")
 
     sys.exit(0)

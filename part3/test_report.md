@@ -42,7 +42,7 @@ API Response (password excluded):
 Password field excluded from response: True
 ```
 
-**✅ PASSED**: Password hashing and verification work correctly.
+**PASSED**: Password hashing and verification work correctly.
 
 ### 2. User Registration Endpoint Test (POST /api/v1/users/)
 
@@ -67,7 +67,7 @@ curl -X POST http://localhost:5002/api/v1/users/ \
 }
 ```
 
-**✅ PASSED**: 
+**PASSED**
 - User created successfully
 - Password not returned in response
 - Only user ID and success message returned
@@ -93,7 +93,7 @@ curl -X POST http://localhost:5002/api/v1/users/ \
 }
 ```
 
-**✅ PASSED**: Second user created successfully.
+**PASSED**: Second user created successfully.
 
 #### Test 2.3: Duplicate Email Registration
 **Command**:
@@ -115,7 +115,7 @@ curl -X POST http://localhost:5002/api/v1/users/ \
 }
 ```
 
-**✅ PASSED**: Email uniqueness validation works correctly.
+**PASSED**: Email uniqueness validation works correctly.
 
 ### 3. User Retrieval Endpoint Test (GET /api/v1/users/<user_id>)
 
@@ -135,7 +135,7 @@ curl -s http://localhost:5002/api/v1/users/3629ee5b-68df-41e5-98f3-75a19136d2cc
 }
 ```
 
-**✅ PASSED**: 
+**PASSED**: 
 - User details retrieved successfully
 - Password field completely excluded from response
 - Only safe user information returned
@@ -165,7 +165,7 @@ curl -s http://localhost:5002/api/v1/users/
 ]
 ```
 
-**✅ PASSED**: 
+**PASSED**: 
 - All users retrieved successfully
 - Password fields excluded from all user records
 - Consistent response format
@@ -173,20 +173,20 @@ curl -s http://localhost:5002/api/v1/users/
 ## Security Verification
 
 ### Password Storage
-- ✅ Passwords are hashed using bcrypt before storage
-- ✅ Bcrypt hash format confirmed ($2b$ prefix)
-- ✅ Original plaintext passwords are never stored
+- Passwords are hashed using bcrypt before storage
+- Bcrypt hash format confirmed ($2b$ prefix)
+- Original plaintext passwords are never stored
 
 ### Password Verification
-- ✅ Correct passwords validate successfully
-- ✅ Incorrect passwords are rejected
-- ✅ Hash comparison works properly
+- Correct passwords validate successfully
+- Incorrect passwords are rejected
+- Hash comparison works properly
 
 ### API Response Security
-- ✅ Password never included in user creation response
-- ✅ Password never included in user retrieval response
-- ✅ Password never included in user list response
-- ✅ API documentation reflects secure response model
+- Password never included in user creation response
+- Password never included in user retrieval response
+- Password never included in user list response
+- API documentation reflects secure response model
 
 ## Implementation Details
 

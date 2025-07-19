@@ -78,7 +78,7 @@ def test_user_retrieval():
         print("   ✗ User data mismatch detected")
         return False
 
-    print("\n🎉 All tests passed! User Retrieval by ID is working correctly.")
+    print("\n All tests passed! User Retrieval by ID is working correctly.")
     return True
 
 
