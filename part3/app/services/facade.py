@@ -1,4 +1,4 @@
-from app.persistence.repository import InMemoryRepository
+from app.persistence.repository import SQLAlchemyRepository
 from app.models.user import User
 from app.models.amenities import Amenity
 from app.models.place import Place
@@ -7,10 +7,10 @@ from app.models.reviews import Review
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repo = InMemoryRepository()
-        self.place_repo = InMemoryRepository()
-        self.review_repo = InMemoryRepository()
-        self.amenity_repo = InMemoryRepository()
+        self.user_repo = SQLAlchemyRepository(User)
+        self.place_repo = SQLAlchemyRepository(Place)
+        self.review_repo = SQLAlchemyRepository(Review)
+        self.amenity_repo = SQLAlchemyRepository(Amenity)
 
     def create_user(self, user_data):
         """Create new user and store in the repo."""
@@ -33,12 +33,8 @@ class HBnBFacade:
         return self.user_repo.get(user_id)
 
     def get_user_by_email(self, email):
-        """Find usr by email."""
-        users = self.user_repo.get_all()
-        for user in users:
-            if user.email == email:
-                return user
-        return None
+        """Find user by email."""
+        return self.user_repo.get_by_attribute('email', email)
 
     def get_all_users(self):
         """Retrieve all users."""
@@ -61,8 +57,7 @@ class HBnBFacade:
                 setattr(user, field, value)
                 
         # Update the user in the repository
-        self.user_repo.update(user_id, user_data)
-        return user
+        return self.user_repo.update(user_id, user_data)
 
     def create_amenity(self, amenity_data):
         """Create a new amenity and store in the repository."""
@@ -80,11 +75,7 @@ class HBnBFacade:
 
     def update_amenity(self, amenity_id, amenity_data):
         """Update an amenity's information."""
-        amenity = self.amenity_repo.get(amenity_id)
-        if amenity:
-            self.amenity_repo.update(amenity_id, amenity_data)
-            return amenity
-        return None
+        return self.amenity_repo.update(amenity_id, amenity_data)
 
     def create_place(self, place_data):
         """Create a new place and store in the repository."""
@@ -154,8 +145,7 @@ class HBnBFacade:
         if 'longitude' in place_data:
             place.longitude = place_data['longitude']
         # Update the place in the repository
-        self.place_repo.update(place_id, place_data)
-        return place
+        return self.place_repo.update(place_id, place_data)
 
     def create_review(self, review_data):
         """Create a new review and store in the repository."""
@@ -200,11 +190,14 @@ class HBnBFacade:
         if not place:
             raise ValueError("Place not found")
 
-        # Get all reviews and filter by place_id
+        # Use SQLAlchemy filtering capabilities
+        # Note: This will need to be adjusted when models have proper relationships
         all_reviews = self.review_repo.get_all()
         place_reviews = []
         for review in all_reviews:
-            if review.place.id == place_id:
+            if hasattr(review, 'place_id') and review.place_id == place_id:
+                place_reviews.append(review)
+            elif hasattr(review, 'place') and review.place.id == place_id:
                 place_reviews.append(review)
         return place_reviews
 
@@ -246,18 +239,8 @@ class HBnBFacade:
 
     def delete_place(self, place_id):
         """Delete a place by ID."""
-        place = self.place_repo.get(place_id)
-        if not place:
-            return False
-
-        self.place_repo.delete(place_id)
-        return True
+        return self.place_repo.delete(place_id)
 
     def delete_review(self, review_id):
         """Delete a review by ID."""
-        review = self.review_repo.get(review_id)
-        if not review:
-            return False
-
-        self.review_repo.delete(review_id)
-        return True
+        return self.review_repo.delete(review_id)
