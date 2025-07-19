@@ -47,10 +47,22 @@ class HBnBFacade:
     def update_user(self, user_id, user_data):
         """Update a user's information."""
         user = self.user_repo.get(user_id)
-        if user:
-            self.user_repo.update(user_id, user_data)
-            return user
-        return None
+        if not user:
+            return None
+            
+        # Handle password hashing if password is being updated
+        if 'password' in user_data:
+            password = user_data.pop('password')
+            user.hash_password(password)
+            
+        # Update other fields directly on the user object
+        for field, value in user_data.items():
+            if hasattr(user, field):
+                setattr(user, field, value)
+                
+        # Update the user in the repository
+        self.user_repo.update(user_id, user_data)
+        return user
 
     def create_amenity(self, amenity_data):
         """Create a new amenity and store in the repository."""
@@ -231,6 +243,15 @@ class HBnBFacade:
         review.save()
 
         return review
+
+    def delete_place(self, place_id):
+        """Delete a place by ID."""
+        place = self.place_repo.get(place_id)
+        if not place:
+            return False
+
+        self.place_repo.delete(place_id)
+        return True
 
     def delete_review(self, review_id):
         """Delete a review by ID."""

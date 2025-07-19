@@ -1,6 +1,8 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
+from app.utils.rbac import admin_required, get_current_user_info
 
 api = Namespace('amenities', description='Amenity operations')
 
@@ -15,17 +17,27 @@ class AmenityList(Resource):
     @api.expect(amenity_model)
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Forbidden - Admin privileges required')
+    @jwt_required()
+    @admin_required
     def post(self):
-        """Register a new amenity"""
+        """Register a new amenity (Admin only)"""
         amenity_data = api.payload
-
-        # Validate required fields
+        
+        # Enhanced validation
         if not amenity_data or 'name' not in amenity_data:
             return {'error': 'Missing required field: name'}, 400
 
-        # Validate name is not empty
-        if not amenity_data['name'].strip():
+        name = amenity_data['name']
+        if not name or not name.strip():
             return {'error': 'Name cannot be empty'}, 400
+            
+        # Check for duplicate amenity names
+        existing_amenities = facade.get_all_amenities()
+        for amenity in existing_amenities:
+            if amenity.name.lower() == name.strip().lower():
+                return {'error': 'Amenity with this name already exists'}, 400
+        
         try:
             # Create the amenity using the facade
             new_amenity = facade.create_amenity(amenity_data)
@@ -33,10 +45,11 @@ class AmenityList(Resource):
                 'id': new_amenity.id,
                 'name': new_amenity.name,
                 'created_at': new_amenity.created_at.isoformat(),
-                'updated_at': new_amenity.updated_at.isoformat()
+                'updated_at': new_amenity.updated_at.isoformat(),
+                'message': 'Amenity successfully created'
             }, 201
         except Exception as e:
-            return {'error': str(e)}, 400
+            return {'error': f'Failed to create amenity: {str(e)}'}, 400
 
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
@@ -80,16 +93,19 @@ class AmenityResource(Resource):
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Forbidden - Admin privileges required')
+    @jwt_required()
+    @admin_required
     def put(self, amenity_id):
-        """Update an amenity's information"""
+        """Update an amenity's information (Admin only)"""
         amenity_data = api.payload
-
-        # Validate required fields
+        
+        # Enhanced validation
         if not amenity_data or 'name' not in amenity_data:
             return {'error': 'Missing required field: name'}, 400
 
-        # Validate name is not empty
-        if not amenity_data['name'].strip():
+        name = amenity_data['name']
+        if not name or not name.strip():
             return {'error': 'Name cannot be empty'}, 400
 
         try:
@@ -98,6 +114,13 @@ class AmenityResource(Resource):
             if not existing_amenity:
                 return {'error': 'Amenity not found'}, 404
 
+            # Check for duplicate names (excluding current amenity)
+            existing_amenities = facade.get_all_amenities()
+            for amenity in existing_amenities:
+                if (amenity.id != amenity_id and 
+                    amenity.name.lower() == name.strip().lower()):
+                    return {'error': 'Another amenity with this name already exists'}, 400
+
             # Update the amenity using the facade
             updated_amenity = facade.update_amenity(amenity_id, amenity_data)
             if updated_amenity:
@@ -105,7 +128,8 @@ class AmenityResource(Resource):
                     'id': updated_amenity.id,
                     'name': updated_amenity.name,
                     'created_at': updated_amenity.created_at.isoformat(),
-                    'updated_at': updated_amenity.updated_at.isoformat()
+                    'updated_at': updated_amenity.updated_at.isoformat(),
+                    'message': 'Amenity successfully updated'
                 }, 200
             else:
                 return {'error': 'Failed to update amenity'}, 400
@@ -113,4 +137,4 @@ class AmenityResource(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
         except Exception as e:
-            return {'error': str(e)}, 500
+            return {'error': f'Update failed: {str(e)}'}, 500

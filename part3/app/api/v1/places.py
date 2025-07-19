@@ -1,7 +1,8 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
+from app.utils.rbac import check_admin_or_owner, get_current_user_info
 
 api = Namespace('places', description='Place operations')
 
@@ -110,15 +111,18 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         place_data = api.payload
-        current_user = get_jwt_identity()
+        # Get comprehensive user info using RBAC utilities
+        user_info = get_current_user_info()
+        current_user_id = user_info['user_id']
+        is_admin = user_info['is_admin']
         
         # Ensure the user is authenticated
-        if not current_user:
+        if not current_user_id:
             return {'error': 'Authentication required'}, 401
         
         # Automatically set owner_id to the authenticated user's ID
         # This ensures users can only create places for themselves
-        place_data['owner_id'] = current_user['id']
+        place_data['owner_id'] = current_user_id
         
         # Validate required fields (owner_id is now automatically set)
         required_fields = ['title', 'price', 'latitude', 'longitude']
@@ -201,9 +205,13 @@ class PlaceResource(Resource):
     @api.response(400, 'Invalid input data')
     @jwt_required()
     def put(self, place_id):
-        """Update a place's information"""
+        """Update a place's information with enhanced RBAC"""
         place_data = api.payload
-        current_user = get_jwt_identity()
+        
+        # Get comprehensive user info using RBAC utilities
+        user_info = get_current_user_info()
+        current_user_id = user_info['user_id']
+        is_admin = user_info['is_admin']
 
         # Validate that we have some data to update
         if not place_data:
@@ -215,9 +223,9 @@ class PlaceResource(Resource):
             if not existing_place:
                 return {'error': 'Place not found'}, 404
                 
-            # Check if current user is authorized to update this place
-            # Users can only update their own places, admins can update any place
-            if existing_place.owner.id != current_user['id'] and not current_user.get('is_admin', False):
+            # Enhanced authorization check using RBAC
+            is_authorized, current_user, admin_status = check_admin_or_owner(existing_place.owner.id)
+            if not is_authorized:
                 return {'error': 'Unauthorized action.'}, 403
 
             # Validate title if provided
@@ -272,3 +280,38 @@ class PlaceResource(Resource):
             return {'error': str(e)}, 400
         except Exception as e:
             return {'error': str(e)}, 500
+    
+    @api.response(200, 'Place deleted successfully')
+    @api.response(404, 'Place not found')
+    @api.response(403, 'Forbidden - Unauthorized action')
+    @jwt_required()
+    def delete(self, place_id):
+        """Delete a place with enhanced RBAC"""
+        # Get comprehensive user info using RBAC utilities
+        user_info = get_current_user_info()
+        current_user_id = user_info['user_id']
+        is_admin = user_info['is_admin']
+        
+        try:
+            # Check if the place exists
+            existing_place = facade.get_place(place_id)
+            if not existing_place:
+                return {'error': 'Place not found'}, 404
+            
+            # Enhanced authorization check using RBAC
+            is_authorized, current_user, admin_status = check_admin_or_owner(existing_place.owner.id)
+            if not is_authorized:
+                return {'error': 'Unauthorized action.'}, 403
+            
+            # Delete the place using facade
+            success = facade.delete_place(place_id)
+            if not success:
+                return {'error': 'Failed to delete place'}, 400
+            
+            return {
+                'message': 'Place deleted successfully',
+                'deleted_by_admin': admin_status
+            }, 200
+            
+        except Exception as e:
+            return {'error': f'Delete failed: {str(e)}'}, 500

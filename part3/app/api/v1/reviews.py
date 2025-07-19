@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
+from app.utils.rbac import check_admin_or_owner, get_current_user_info
 
 api = Namespace('reviews', description='Review operations')
 
@@ -105,17 +106,22 @@ class ReviewResource(Resource):
     @api.response(403, 'Forbidden - Unauthorized action')
     @jwt_required()
     def put(self, review_id):
-        """Update a review's information"""
+        """Update a review's information with enhanced RBAC"""
         review_data = api.payload
-        current_user = get_jwt_identity()
+        
+        # Get comprehensive user info using RBAC utilities
+        user_info = get_current_user_info()
+        current_user_id = user_info['user_id']
+        is_admin = user_info['is_admin']
         
         # Get the existing review to check ownership
         existing_review = facade.get_review(review_id)
         if not existing_review:
             return {'error': 'Review not found'}, 404
             
-        # Users can only update their own reviews
-        if existing_review.user.id != current_user['id'] and not current_user.get('is_admin', False):
+        # Enhanced authorization check using RBAC
+        is_authorized, current_user, admin_status = check_admin_or_owner(existing_review.user.id)
+        if not is_authorized:
             return {'error': 'Unauthorized action.'}, 403
             
         # Prevent changing user_id and place_id in updates
@@ -136,34 +142,44 @@ class ReviewResource(Resource):
                 'user_id': updated_review.user.id,
                 'place_id': updated_review.place.id,
                 'created_at': updated_review.created_at.isoformat(),
-                'updated_at': updated_review.updated_at.isoformat()
+                'updated_at': updated_review.updated_at.isoformat(),
+                'message': 'Review successfully updated',
+                'updated_by_admin': admin_status
             }, 200
         except ValueError as e:
             return {'error': str(e)}, 400
         except Exception as e:
-            return {'error': 'An unexpected error occurred'}, 400
+            return {'error': f'Update failed: {str(e)}'}, 400
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     @api.response(403, 'Forbidden - Unauthorized action')
     @jwt_required()
     def delete(self, review_id):
-        """Delete a review"""
-        current_user = get_jwt_identity()
+        """Delete a review with enhanced RBAC"""
+        # Get comprehensive user info using RBAC utilities
+        user_info = get_current_user_info()
+        current_user_id = user_info['user_id']
+        is_admin = user_info['is_admin']
         
         # Get the existing review to check ownership
         existing_review = facade.get_review(review_id)
         if not existing_review:
             return {'error': 'Review not found'}, 404
             
-        # Users can only delete their own reviews
-        if existing_review.user.id != current_user['id'] and not current_user.get('is_admin', False):
+        # Enhanced authorization check using RBAC
+        is_authorized, current_user, admin_status = check_admin_or_owner(existing_review.user.id)
+        if not is_authorized:
             return {'error': 'Unauthorized action.'}, 403
         
         success = facade.delete_review(review_id)
         if not success:
             return {'error': 'Review not found'}, 404
-        return {'message': 'Review deleted successfully'}, 200
+            
+        return {
+            'message': 'Review deleted successfully',
+            'deleted_by_admin': admin_status
+        }, 200
 
 
 @api.route('/places/<place_id>/reviews')
