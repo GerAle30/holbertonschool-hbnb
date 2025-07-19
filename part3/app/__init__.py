@@ -24,6 +24,9 @@ def create_app(config_class="config.DevelopmentConfig"):
 
     # Import models to ensure they are registered with SQLAlchemy
     from app.models.user import User
+    from app.models.place import Place
+    from app.models.reviews import Review
+    from app.models.amenities import Amenity
     
     # Register API blueprint
     from app.api.v1 import blueprint as api_v1

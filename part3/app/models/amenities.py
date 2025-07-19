@@ -1,7 +1,42 @@
+from app import db
 from .base_models import BaseModel
 
 
 class Amenity(BaseModel):
-    def __init__(self, name=""):
-        super().__init__()
-        self.name = name
+    """Amenity model for managing place amenities.
+    
+    This model handles amenity information that can be associated
+    with rental places (e.g., WiFi, Pool, Parking).
+    """
+    __tablename__ = 'amenities'
+    
+    # Column definitions with appropriate constraints
+    name = db.Column(db.String(50), nullable=False, unique=True)
+
+    def __init__(self, name=None, **kwargs):
+        """Initialize a new Amenity instance with validation.
+        
+        Args:
+            name (str): Name of the amenity (required, max 50 chars, unique)
+            **kwargs: Additional keyword arguments passed to BaseModel
+        
+        Raises:
+            ValueError: If validation fails for any required field
+        """
+        # Validate input parameters
+        if name is not None:
+            if not name or not name.strip():
+                raise ValueError("Amenity name is required and cannot be empty")
+            if len(name.strip()) > 50:
+                raise ValueError("Amenity name must be 50 characters or less")
+        
+        # Call parent constructor
+        super().__init__(**kwargs)
+        
+        # Set attributes
+        if name is not None:
+            self.name = name.strip()
+    
+    def __repr__(self):
+        """Return string representation of Amenity instance."""
+        return f"<Amenity(id='{self.id}', name='{self.name}')>"
