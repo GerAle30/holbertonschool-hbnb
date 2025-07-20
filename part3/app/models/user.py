@@ -23,8 +23,8 @@ class User(BaseModel):
     is_admin = db.Column(db.Boolean, default=False)
     
     # Relationships
-    places = relationship('Place', back_populates='owner')
-    reviews = relationship('Review', back_populates='user')
+    places = relationship('Place', back_populates='owner', lazy=True)
+    reviews = relationship('Review', back_populates='user', lazy=True)
 
     def __init__(self, first_name=None, last_name=None, email=None, is_admin=False, **kwargs):
         """Initialize a new User instance with validation.

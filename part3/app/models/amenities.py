@@ -21,7 +21,7 @@ class Amenity(BaseModel):
     name = db.Column(db.String(50), nullable=False, unique=True)
     
     # Relationships
-    places = relationship('Place', secondary='place_amenities', back_populates='amenities')
+    places = relationship('Place', secondary='place_amenities', back_populates='amenities', lazy='subquery')
 
     def __init__(self, name=None, **kwargs):
         """Initialize a new Amenity instance with validation.

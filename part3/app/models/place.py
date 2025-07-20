@@ -21,8 +21,8 @@ class Place(BaseModel):
     
     # Relationships
     owner = relationship('User', back_populates='places')
-    amenities = relationship('Amenity', secondary='place_amenities', back_populates='places')
-    reviews = relationship('Review', back_populates='place')
+    amenities = relationship('Amenity', secondary='place_amenities', back_populates='places', lazy='subquery')
+    reviews = relationship('Review', back_populates='place', lazy=True)
 
     def __init__(self, title=None, description=None, price=None, 
                  latitude=None, longitude=None, owner_id=None, **kwargs):
