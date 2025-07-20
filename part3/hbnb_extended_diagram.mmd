@@ -1,0 +1,113 @@
+erDiagram
+    %% Extended HBnB Database ER Diagram
+    %% Including booking functionality and enhanced relationships
+    
+    User {
+        string id PK
+        string first_name
+        string last_name
+        string email UK
+        string password
+        boolean is_admin
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Place {
+        string id PK
+        string title
+        text description
+        decimal price_per_night
+        float latitude
+        float longitude
+        int max_guests
+        int bedrooms
+        int bathrooms
+        boolean is_available
+        string owner_id FK
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Reservation {
+        string id PK
+        string guest_id FK
+        string place_id FK
+        date check_in_date
+        date check_out_date
+        int number_of_guests
+        decimal total_price
+        string status
+        text special_requests
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Payment {
+        string id PK
+        string reservation_id FK
+        decimal amount
+        string payment_method
+        string transaction_id UK
+        string status
+        datetime payment_date
+        datetime created_at
+    }
+    
+    Review {
+        string id PK
+        text text
+        int rating
+        string user_id FK
+        string place_id FK
+        string reservation_id FK
+        boolean is_verified
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Amenity {
+        string id PK
+        string name UK
+        string category
+        text description
+        string icon_url
+    }
+    
+    Place_Amenity {
+        string place_id FK
+        string amenity_id FK
+        datetime added_at
+    }
+    
+    Message {
+        string id PK
+        string sender_id FK
+        string receiver_id FK
+        string reservation_id FK
+        text content
+        boolean is_read
+        datetime sent_at
+    }
+    
+    %% Core Relationships
+    User ||--o{ Place : "owns"
+    User ||--o{ Reservation : "books_as_guest"
+    Place ||--o{ Reservation : "is_booked"
+    
+    %% Booking and Payment Flow
+    Reservation ||--|| Payment : "has_payment"
+    Reservation ||--o| Review : "can_be_reviewed"
+    
+    %% Communication
+    User ||--o{ Message : "sends"
+    User ||--o{ Message : "receives"
+    Reservation ||--o{ Message : "relates_to"
+    
+    %% Reviews (Enhanced)
+    User ||--o{ Review : "writes"
+    Place ||--o{ Review : "receives"
+    
+    %% Place Amenities
+    Place }|--|| Place_Amenity : ""
+    Amenity }|--|| Place_Amenity : ""
