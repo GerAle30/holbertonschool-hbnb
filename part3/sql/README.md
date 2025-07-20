@@ -16,6 +16,14 @@ This directory contains SQL scripts for creating and managing the HBnB (Airbnb c
 ### Data Scripts
 
 7. **`06_insert_sample_data.sql`** - Inserts sample data for testing and development
+8. **`07_insert_initial_data.sql`** - Inserts required initial data (admin user + amenities)
+9. **`08_complete_setup.sql`** - Complete setup script (tables + initial data)
+
+### Utility Scripts
+
+10. **`generate_initial_data.py`** - Generates bcrypt hashes and UUIDs for initial data
+11. **`test_admin_password.py`** - Tests admin password verification
+12. **`validate_sql.py`** - Validates SQL syntax
 
 ## Database Schema
 
@@ -87,11 +95,25 @@ SOURCE /path/to/sql/04_create_review_table.sql;
 SOURCE /path/to/sql/05_create_place_amenity_table.sql;
 ```
 
-### 2. Insert Sample Data
+### 2. Insert Initial Data (Required)
 
 ```sql
--- Load sample data for testing
+-- Insert required initial data (admin user + amenities)
+SOURCE /path/to/sql/07_insert_initial_data.sql;
+```
+
+### 3. Insert Sample Data (Optional)
+
+```sql
+-- Load additional sample data for testing
 SOURCE /path/to/sql/06_insert_sample_data.sql;
+```
+
+### Alternative: Complete Setup
+
+```sql
+-- Complete setup with tables and initial data in one script
+SOURCE /path/to/sql/08_complete_setup.sql;
 ```
 
 ### 3. Verify Installation
