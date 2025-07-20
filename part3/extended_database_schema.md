@@ -2,7 +2,7 @@
 
 This document demonstrates an extended Entity Relationship (ER) diagram for the HBnB application, including booking/reservation functionality and enhanced features.
 
-## 🆕 New Entities Added
+## New Entities Added
 
 ### **Reservation (Booking)**
 - **Purpose**: Central entity for managing bookings between guests and places
@@ -143,7 +143,7 @@ erDiagram
     Amenity }|--|| Place_Amenity : ""
 ```
 
-## 🔗 Key Relationships Explained
+## Key Relationships Explained
 
 ### **Core Booking Flow**
 1. **User → Reservation (1:N)**: A user can make multiple bookings as a guest
@@ -161,7 +161,7 @@ erDiagram
 - **Reservation Context**: Messages can be related to specific bookings
 - **Use Cases**: Pre-arrival questions, check-in instructions, issue reporting
 
-## 📊 Business Logic Constraints
+## Business Logic Constraints
 
 ### **Reservation Status Flow**
 ```
@@ -178,7 +178,7 @@ cancelled   cancelled
 - Payment must be completed before reservation status changes to "confirmed"
 - `transaction_id` ensures no duplicate payments
 
-## 🔍 Advanced Query Examples
+## Advanced Query Examples
 
 ### Find all reservations for a place with guest details:
 ```sql
@@ -210,7 +210,7 @@ AND p.id NOT IN (
 );
 ```
 
-## 🚀 Benefits of This Design
+## Benefits of This Design
 
 1. **Data Integrity**: Strong foreign key relationships prevent orphaned records
 2. **Audit Trail**: Timestamps on all entities for tracking changes
@@ -218,14 +218,14 @@ AND p.id NOT IN (
 4. **Business Logic**: Status fields enable proper workflow management
 5. **Communication**: Built-in messaging reduces external dependencies
 
-## 📁 Files Generated
+## Files Generated
 
 - `hbnb_extended_diagram.mmd` - Mermaid source file
 - `hbnb_extended_diagram.png` - PNG image export  
 - `hbnb_extended_diagram.svg` - SVG image export
 - `extended_database_schema.md` - This comprehensive documentation
 
-## 🔄 Schema Evolution Comparison
+## Schema Evolution Comparison
 
 | Aspect | Simple Schema | Extended Schema |
 |--------|---------------|----------------|
@@ -239,7 +239,7 @@ AND p.id NOT IN (
 | **Audit Trail** | Limited | Comprehensive timestamps |
 | **Scalability** | Good for MVP | Production-ready |
 
-## 🎯 Key Relationship Insights Demonstrated
+## Key Relationship Insights Demonstrated
 
 ### **1. Many-to-Many → Junction Table**
 - Place ↔ Amenity requires Place_Amenity junction table
