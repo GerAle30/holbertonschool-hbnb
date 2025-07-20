@@ -1,0 +1,62 @@
+erDiagram
+    %% HBnB Database Entity-Relationship Diagram
+    %% This diagram shows all entities and their relationships
+    
+    User {
+        string id PK "UUID - Primary Key"
+        string first_name "NOT NULL"
+        string last_name "NOT NULL"
+        string email "UNIQUE, NOT NULL"
+        string password "NOT NULL (bcrypt hashed)"
+        boolean is_admin "DEFAULT FALSE"
+        datetime created_at "AUTO"
+        datetime updated_at "AUTO"
+    }
+    
+    Place {
+        string id PK "UUID - Primary Key"
+        string title "NOT NULL"
+        text description "NULLABLE"
+        decimal price "NOT NULL, CHECK > 0"
+        float latitude "NOT NULL, -90 to 90"
+        float longitude "NOT NULL, -180 to 180"
+        string owner_id FK "NOT NULL"
+        datetime created_at "AUTO"
+        datetime updated_at "AUTO"
+    }
+    
+    Review {
+        string id PK "UUID - Primary Key"
+        text text "NOT NULL"
+        int rating "NOT NULL, 1-5"
+        string user_id FK "NOT NULL"
+        string place_id FK "NOT NULL"
+        datetime created_at "AUTO"
+        datetime updated_at "AUTO"
+    }
+    
+    Amenity {
+        string id PK "UUID - Primary Key"
+        string name "UNIQUE, NOT NULL"
+        datetime created_at "AUTO"
+        datetime updated_at "AUTO"
+    }
+    
+    Place_Amenity {
+        string place_id FK "PRIMARY KEY"
+        string amenity_id FK "PRIMARY KEY"
+        datetime created_at "AUTO"
+    }
+    
+    %% Relationships
+    User ||--o{ Place : "owns (one-to-many)"
+    User ||--o{ Review : "writes (one-to-many)"
+    Place ||--o{ Review : "receives (one-to-many)"
+    Place }o--o{ Amenity : "has (many-to-many via Place_Amenity)"
+    
+    %% Foreign Key Constraints
+    Place ||--|| User : owner_id
+    Review ||--|| User : user_id
+    Review ||--|| Place : place_id
+    Place_Amenity ||--|| Place : place_id
+    Place_Amenity ||--|| Amenity : amenity_id
