@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBNB - Place Details</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="images/icon.png" type="image/png">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="images/logo.png" alt="HBNB Logo" class="logo">
+            <a href="login.html" class="login-button">Login</a>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <h1>Cozy Downtown Apartment</h1>
+        
+        <div class="place-details">
+            <img src="images/sample1.jpg" alt="Place Image" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 2rem;">
+            
+            <div class="place-info">
+                <div>
+                    <h4>Host Information</h4>
+                    <p><strong>Host:</strong> John Doe</p>
+                    <p><strong>Email:</strong> john.doe@example.com</p>
+                </div>
+                
+                <div>
+                    <h4>Price & Details</h4>
+                    <p><strong>Price per night:</strong> $100</p>
+                    <p><strong>Location:</strong> Downtown Area</p>
+                </div>
+                
+                <div style="grid-column: 1 / -1;">
+                    <h4>Description</h4>
+                    <p>A beautiful and cozy apartment located in the heart of downtown. Perfect for business travelers and tourists alike. The apartment features modern amenities, comfortable furniture, and is within walking distance of major attractions.</p>
+                </div>
+                
+                <div style="grid-column: 1 / -1;">
+                    <h4>Amenities</h4>
+                    <ul class="amenities-list">
+                        <li>WiFi</li>
+                        <li>Air Conditioning</li>
+                        <li>Kitchen</li>
+                        <li>Parking</li>
+                        <li>TV</li>
+                        <li>Washing Machine</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="reviews-section">
+            <h3>Reviews</h3>
+            
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-author">Alice Smith</span>
+                    <span class="review-rating">⭐ 5/5</span>
+                </div>
+                <p class="review-comment">Amazing place! The location is perfect and the host was very accommodating. Would definitely stay here again.</p>
+            </div>
+            
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-author">Bob Johnson</span>
+                    <span class="review-rating">⭐ 4/5</span>
+                </div>
+                <p class="review-comment">Great apartment with all the necessary amenities. Very clean and comfortable. Only minor issue was the noise from the street at night.</p>
+            </div>
+            
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-author">Carol Wilson</span>
+                    <span class="review-rating">⭐ 5/5</span>
+                </div>
+                <p class="review-comment">Excellent stay! The apartment exceeded my expectations. Perfect for a weekend getaway in the city.</p>
+            </div>
+        </div>
+
+        <!-- Add Review Button (only shown when logged in) -->
+        <div class="text-center mt-2">
+            <a href="add_review.html" class="details-button auth-only">Add Review</a>
+        </div>
+
+        <!-- Alternative: Inline Add Review Form (uncomment to use instead of button) -->
+        <!--
+        <div class="add-review auth-only">
+            <h3>Add Your Review</h3>
+            <form class="form" id="review-form">
+                <div class="form-group">
+                    <label for="rating">Rating:</label>
+                    <select id="rating" name="rating" required>
+                        <option value="">Select Rating</option>
+                        <option value="1">1 Star</option>
+                        <option value="2">2 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="5">5 Stars</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="comment">Comment:</label>
+                    <textarea id="comment" name="comment" required placeholder="Share your experience..."></textarea>
+                </div>
+                
+                <button type="submit" class="submit-button">Submit Review</button>
+            </form>
+        </div>
+        -->
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>All rights reserved. HBNB &copy; 2025</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
