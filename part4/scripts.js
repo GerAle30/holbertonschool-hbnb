@@ -291,12 +291,12 @@ function displaySamplePlaces() {
     if (!placesGrid) return;
 
     const samplePlaces = [
-        { id: 1, name: "Budget Hostel Room", price: 25, image: "images/sample1.jpg" },
-        { id: 2, name: "Shared Apartment", price: 45, image: "images/sample2.jpg" },
-        { id: 3, name: "Cozy Downtown Apartment", price: 85, image: "images/sample1.jpg" },
-        { id: 4, name: "Modern Loft Space", price: 120, image: "images/sample2.jpg" },
-        { id: 5, name: "Luxury Penthouse", price: 250, image: "images/sample1.jpg" },
-        { id: 6, name: "Beach House Villa", price: 180, image: "images/sample2.jpg" }
+        { id: 1, name: "Budget Hostel Room", price: 25, image: "images/icon.png" },
+        { id: 2, name: "Shared Apartment", price: 45, image: "images/icon.png" },
+        { id: 3, name: "Cozy Downtown Apartment", price: 85, image: "images/icon.png" },
+        { id: 4, name: "Modern Loft Space", price: 120, image: "images/icon.png" },
+        { id: 5, name: "Luxury Penthouse", price: 250, image: "images/icon.png" },
+        { id: 6, name: "Beach House Villa", price: 180, image: "images/icon.png" }
     ];
 
     placesGrid.innerHTML = '';
@@ -378,7 +378,7 @@ function displayPlaceDetails(place) {
     
     // Create place image
     const placeImage = document.createElement('img');
-    placeImage.src = place.image || 'images/sample1.jpg';
+    placeImage.src = place.image || 'images/icon.png';
     placeImage.alt = place.name;
     placeImage.style.cssText = 'width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 2rem;';
     placeDetailsSection.appendChild(placeImage);
@@ -421,7 +421,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 1,
             name: "Budget Hostel Room",
             price: 25,
-            image: "images/sample1.jpg",
+            image: "images/icon.png",
             host: "Sarah Johnson",
             location: "City Center",
             description: "A comfortable and affordable hostel room perfect for budget travelers. Clean facilities and friendly staff.",
@@ -431,7 +431,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 2,
             name: "Shared Apartment",
             price: 45,
-            image: "images/sample2.jpg",
+            image: "images/icon.png",
             host: "Mike Chen",
             location: "Suburban Area",
             description: "A nice shared apartment with common areas and a great community atmosphere.",
@@ -441,7 +441,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 3,
             name: "Cozy Downtown Apartment",
             price: 85,
-            image: "images/sample1.jpg",
+            image: "images/icon.png",
             host: "John Doe",
             location: "Downtown Area",
             description: "A beautiful and cozy apartment located in the heart of downtown. Perfect for business travelers and tourists alike.",
@@ -451,7 +451,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 4,
             name: "Modern Loft Space",
             price: 120,
-            image: "images/sample2.jpg",
+            image: "images/icon.png",
             host: "Jane Smith",
             location: "Arts District",
             description: "A stylish modern loft with great city views and contemporary amenities.",
@@ -461,7 +461,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 5,
             name: "Luxury Penthouse",
             price: 250,
-            image: "images/sample1.jpg",
+            image: "images/icon.png",
             host: "Robert Wilson",
             location: "Uptown",
             description: "An exclusive luxury penthouse with premium amenities and stunning views.",
@@ -471,7 +471,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 6,
             name: "Beach House Villa",
             price: 180,
-            image: "images/sample2.jpg",
+            image: "images/icon.png",
             host: "Maria Garcia",
             location: "Beachfront",
             description: "A beautiful beach house villa with direct beach access and ocean views.",
@@ -772,9 +772,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Check authentication and load content based on page
+// Check authentication and load content based on page
     if (window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/')) {
-        checkAuthentication();
+        checkAuthenticationForIndex();
     } else if (window.location.pathname.includes('place.html')) {
         checkAuthenticationForPlace();
     }
