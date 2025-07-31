@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HBnB - Place Details</title>
+    <title>Test Place Details - HBnB</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="icon.png">
 </head>
@@ -20,11 +20,35 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="login.html">Login</a></li>
+                <li><a href="test_login.html">Test Login</a></li>
+                <li><a href="test_index.html">Test Index</a></li>
+                <li><a href="test_place.html?id=1">Test Place</a></li>
             </ul>
         </div>
     </nav>
 
     <main>
+        <div class="info-item mb-20">
+            <h2>Place Details Testing</h2>
+            <p>This page demonstrates the place details functionality with authentication checks and review management.</p>
+        </div>
+
+        <div class="info-item mb-20">
+            <h3>Authentication Status</h3>
+            <p id="auth-status">Checking...</p>
+            <button id="simulate-login" class="details-button">Simulate Login</button>
+            <button id="clear-auth" class="details-button">Clear Authentication</button>
+        </div>
+
+        <div class="info-item mb-20">
+            <h3>Test Place URLs</h3>
+            <p>
+                <a href="test_place.html?id=1" class="details-button">Test Place 1 (Paris)</a>
+                <a href="test_place.html?id=2" class="details-button">Test Place 2 (New York)</a>
+                <a href="test_place.html?id=3" class="details-button">Test Place 3 (Barcelona)</a>
+            </p>
+        </div>
+
         <div id="place-details">
             <!-- Place details will be loaded dynamically -->
         </div>
@@ -40,11 +64,11 @@
                     <label for="rating">Rating:</label>
                     <select id="rating" name="rating" required>
                         <option value="">Select a rating</option>
-                        <option value="1">1 - Poor</option>
-                        <option value="2">2 - Fair</option>
-                        <option value="3">3 - Good</option>
-                        <option value="4">4 - Very Good</option>
-                        <option value="5">5 - Excellent</option>
+                        <option value="1">⭐ 1 - Poor</option>
+                        <option value="2">⭐⭐ 2 - Fair</option>
+                        <option value="3">⭐⭐⭐ 3 - Good</option>
+                        <option value="4">⭐⭐⭐⭐ 4 - Very Good</option>
+                        <option value="5">⭐⭐⭐⭐⭐ 5 - Excellent</option>
                     </select>
                 </div>
                 <button type="submit" class="submit-button">Submit Review</button>
@@ -57,6 +81,6 @@
         <p>&copy; 2024 HBnB. All rights reserved.</p>
     </footer>
 
-    <script src="scripts/place.js"></script>
+    <script src="scripts/test_place.js"></script>
 </body>
 </html>
