@@ -41,32 +41,14 @@ function getPlaceIdFromURL() {
     return urlParams.get('id');
 }
 
-// Check user authentication and control UI (for index page)
-function checkAuthentication() {
+// Check user authentication and redirect if not authenticated (for add review page)
+function checkAuthenticationForAddReview() {
     const token = getCookie('token');
-    const loginLink = document.getElementById('login-link');
-    
     if (!token) {
-        if (loginLink) {
-            loginLink.style.display = 'block';
-            loginLink.textContent = 'Login';
-            loginLink.href = 'login.html';
-        }
-        // Show sample places for non-authenticated users
-        displaySamplePlaces();
-    } else {
-        if (loginLink) {
-            loginLink.style.display = 'block';
-            loginLink.textContent = 'Logout';
-            loginLink.href = '#';
-            loginLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                logout();
-            });
-        }
-        // Fetch places data if the user is authenticated
-        fetchPlaces(token);
+        window.location.href = 'index.html';
+        return null;
     }
+    return token;
 }
 
 // Check user authentication for place details page
@@ -112,6 +94,34 @@ function checkAuthenticationForPlace() {
         }
     } else {
         showError('No place ID provided in URL');
+    }
+}
+
+// Check user authentication for index page
+function checkAuthenticationForIndex() {
+    const token = getCookie('token');
+    const loginLink = document.getElementById('login-link');
+    
+    if (!token) {
+        if (loginLink) {
+            loginLink.style.display = 'block';
+            loginLink.textContent = 'Login';
+            loginLink.href = 'login.html';
+        }
+        // Show sample places for non-authenticated users
+        displaySamplePlaces();
+    } else {
+        if (loginLink) {
+            loginLink.style.display = 'block';
+            loginLink.textContent = 'Logout';
+            loginLink.href = '#';
+            loginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+        }
+        // Fetch places data if the user is authenticated
+        fetchPlaces(token);
     }
 }
 
