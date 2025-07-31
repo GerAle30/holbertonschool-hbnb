@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HBnB - Home</title>
+    <title>Test Index - HBnB</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="icon.png">
 </head>
@@ -20,11 +20,25 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="login.html">Login</a></li>
+                <li><a href="test_login.html">Test Login</a></li>
+                <li><a href="test_index.html">Test Index</a></li>
             </ul>
         </div>
     </nav>
 
     <main>
+        <div class="info-item mb-20">
+            <h2>Index Page Testing</h2>
+            <p>This page demonstrates the index functionality with authentication checks and price filtering.</p>
+        </div>
+
+        <div class="info-item mb-20">
+            <h3>Authentication Status</h3>
+            <p id="auth-status">Checking...</p>
+            <button id="simulate-login" class="details-button">Simulate Login</button>
+            <button id="clear-auth" class="details-button">Clear Authentication</button>
+        </div>
+
         <div class="filter-section">
             <h2>Filter Places by Price</h2>
             <select id="price-filter">
@@ -45,6 +59,6 @@
         <p>&copy; 2024 HBnB. All rights reserved.</p>
     </footer>
 
-    <script src="scripts/index.js"></script>
+    <script src="scripts/test_index.js"></script>
 </body>
 </html>

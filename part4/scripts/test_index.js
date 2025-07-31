@@ -1,10 +1,17 @@
+// Mock API and authentication for index feature testing
 // API Configuration
-const API_URL = 'http://localhost:5000/api'; // Adjust this to your API URL
+const API_URL = 'http://localhost:5000/api';
 
 // Global variable to store all places
 let allPlaces = [];
 
 // Cookie utility functions
+function setCookie(name, value, days = 7) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+}
+
 function getCookie(name) {
     const nameEQ = name + "=";
     const ca = document.cookie.split(';');
@@ -16,6 +23,10 @@ function getCookie(name) {
     return null;
 }
 
+function deleteCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}
+
 // Check user authentication
 function checkAuthentication() {
     const token = getCookie('token');
@@ -23,6 +34,8 @@ function checkAuthentication() {
 
     if (!token) {
         loginLink.style.display = 'block';
+        // Load sample places even without authentication for testing
+        loadSamplePlaces();
     } else {
         loginLink.style.display = 'none';
         // Fetch places data if the user is authenticated
@@ -164,8 +177,29 @@ function loadSamplePlaces() {
 
 // DOM Content Loaded Event Listener
 document.addEventListener('DOMContentLoaded', () => {
+    const authStatus = document.getElementById('auth-status');
+    const simulateLoginButton = document.getElementById('simulate-login');
+    const clearAuthButton = document.getElementById('clear-auth');
+
     // Check user authentication on page load
     checkAuthentication();
+    updateAuthStatus();
+
+    if (simulateLoginButton) {
+        simulateLoginButton.addEventListener('click', function() {
+            setCookie('token', 'mock_jwt_token_' + new Date().getTime());
+            checkAuthentication();
+            updateAuthStatus();
+        });
+    }
+
+    if (clearAuthButton) {
+        clearAuthButton.addEventListener('click', function() {
+            deleteCookie('token');
+            checkAuthentication();
+            updateAuthStatus();
+        });
+    }
     
     // Implement client-side filtering by price
     document.getElementById('price-filter').addEventListener('change', (event) => {
@@ -187,4 +221,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    function updateAuthStatus() {
+        const token = getCookie('token');
+        if (token) {
+            authStatus.textContent = `✅ Authenticated with token: ${token.substring(0, 15)}...`;
+        } else {
+            authStatus.textContent = '❌ Not authenticated';
+        }
+    }
 });
