@@ -120,7 +120,9 @@ function displayPlaceDetails(place) {
                 </div>
                 <div class="info-item">
                     <h3>Amenities</h3>
-                    <p>${place.amenities ? place.amenities.join(', ') : 'WiFi, Kitchen, Parking'}</p>
+                    <div class="amenities-list">
+                        ${formatAmenities(place.amenities || ['WiFi', 'Kitchen', 'Parking'])}
+                    </div>
                 </div>
             </div>
             
@@ -244,6 +246,32 @@ function showMessage(message, type) {
     }, 5000);
 }
 
+// Format amenities with icons
+function formatAmenities(amenities) {
+    const amenityIcons = {
+        'WiFi': 'icon_wifi.png',
+        'Wifi': 'icon_wifi.png',
+        'Internet': 'icon_wifi.png',
+        'Kitchen': 'icon_bed.png', // Using bed icon as placeholder for kitchen
+        'Bathroom': 'icon_bath.png',
+        'Bath': 'icon_bath.png',
+        'Bathtub': 'icon_bath.png',
+        'Shower': 'icon_bath.png',
+        'Bedroom': 'icon_bed.png',
+        'Bed': 'icon_bed.png',
+        'Sleeping': 'icon_bed.png'
+    };
+    
+    return amenities.map(amenity => {
+        const icon = amenityIcons[amenity];
+        if (icon) {
+            return `<div class="amenity-item"><img src="${icon}" alt="${amenity}" class="amenity-icon"> ${amenity}</div>`;
+        } else {
+            return `<div class="amenity-item">• ${amenity}</div>`;
+        }
+    }).join('');
+}
+
 // Get random image for demo purposes
 function getRandomImage() {
     const images = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png', '9.png', '10.png'];
@@ -260,7 +288,7 @@ function loadSamplePlace(placeId) {
             price_per_night: 120,
             host: { first_name: 'Marie', last_name: 'Dubois' },
             description: 'A charming apartment in the heart of Paris, perfect for exploring the city. Walking distance to major attractions.',
-            amenities: ['WiFi', 'Kitchen', 'Air Conditioning', 'Parking']
+            amenities: ['WiFi', 'Kitchen', 'Bathroom', 'Bedroom']
         },
         '2': {
             name: 'Modern Loft in New York',
@@ -269,7 +297,7 @@ function loadSamplePlace(placeId) {
             price_per_night: 200,
             host: { first_name: 'John', last_name: 'Smith' },
             description: 'A stylish loft in Manhattan with stunning city views. Perfect for business or leisure travelers.',
-            amenities: ['WiFi', 'Gym Access', 'Concierge', 'Pet Friendly']
+            amenities: ['WiFi', 'Bed', 'Bath', 'Internet']
         },
         '3': {
             name: 'Beach House in Barcelona',
@@ -278,7 +306,7 @@ function loadSamplePlace(placeId) {
             price_per_night: 150,
             host: { first_name: 'Carlos', last_name: 'Rodriguez' },
             description: 'Beautiful house near the beach with amazing sea views.',
-            amenities: ['WiFi', 'Beach Access', 'BBQ Area', 'Parking']
+            amenities: ['Wifi', 'Bedroom', 'Shower', 'Beach Access']
         }
     };
     

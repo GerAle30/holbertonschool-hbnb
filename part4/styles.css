@@ -396,6 +396,31 @@ footer {
     border-radius: 5px;
 }
 
+/* Amenity icons styles */
+.amenities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.amenity-item {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid #e9ecef;
+    font-size: 14px;
+    min-width: 100px;
+}
+
+.amenity-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    object-fit: contain;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .header-container {
