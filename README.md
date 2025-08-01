@@ -113,13 +113,26 @@ holbertonschool-hbnb/
 │   │   │   ├── reviews.py         # Review management
 │   │   │   └── amenities.py       # Amenity management
 │   │   ├── models/                # Enhanced models
-│   │   └── services/              # Business logic with auth
-│   ├── test/                      # Authentication tests
+│   │   ├── persistence/           # Database repositories
+│   │   ├── services/              # Business logic with auth
+│   │   └── utils/                 # RBAC utilities
+│   ├── instance/                  # SQLite database
 │   ├── requirements.txt           # Python dependencies
 │   ├── run.py                     # Application entry point
-│   ├── PUBLIC_ENDPOINTS.md        # Public API documentation
-│   ├── SECURED_ENDPOINTS.md       # Protected API documentation
 │   └── README.md                  # Authentication documentation
+├── part4/                          # 🌐 Frontend Implementation
+│   ├── index.html                 # Main page with place listings
+│   ├── login.html                 # User authentication page
+│   ├── place.html                 # Detailed place view
+│   ├── add_review.html           # Review submission form
+│   ├── scripts.js                 # Frontend JavaScript logic
+│   ├── css/
+│   │   └── styles.css            # Complete styling
+│   ├── images/                    # Place images and icons
+│   │   ├── logo.png
+│   │   ├── *.png                 # Place thumbnails
+│   │   └── icons/                # UI icons
+│   └── README.md                  # Frontend documentation
 └── README.md                      # This file
 ```
 
@@ -159,6 +172,37 @@ holbertonschool-hbnb/
 5. **Access the API:**
    - **Swagger UI**: [http://127.0.0.1:5000/api/v1/](http://127.0.0.1:5000/api/v1/)
    - **Base API**: [http://127.0.0.1:5000/api/v1/](http://127.0.0.1:5000/api/v1/)
+
+### 🌐 Full-Stack Experience (Frontend + Backend)
+
+For the complete user experience with the web interface:
+
+1. **Start the backend** (follow steps above)
+
+2. **Navigate to the frontend:**
+   ```bash
+   cd ../part4
+   ```
+
+3. **Serve the frontend:**
+   ```bash
+   # Using Python's built-in server
+   python3 -m http.server 8000
+   
+   # Or using Node.js http-server
+   npx http-server
+   ```
+
+4. **Access the web application:**
+   - **Frontend UI**: [http://localhost:8000](http://localhost:8000)
+   - **Login Page**: [http://localhost:8000/login.html](http://localhost:8000/login.html)
+
+5. **Experience the full application:**
+   - Browse available places
+   - Create an account or login
+   - View detailed place information
+   - Add reviews to places
+   - Manage your listings
 
 ---
 
@@ -342,9 +386,9 @@ python run.py
 |-------|-------------|--------|
 | **Part 1** | Technical Documentation & UML Diagrams | ✅ Complete |
 | **Part 2** | Basic API Implementation | ✅ Complete |
-| **Part 3** | Authentication & Authorization | ✅ Complete |
-| **Part 4** | Database Integration | 🔄 Future |
-| **Part 5** | Frontend Implementation | 🔄 Future |
+| **Part 3** | Authentication & Authorization + Database | ✅ Complete |
+| **Part 4** | Frontend Implementation | ✅ Complete |
+| **Part 5** | Advanced Features & Deployment | 🔄 Future |
 
 ---
 

@@ -291,12 +291,12 @@ function displaySamplePlaces() {
     if (!placesGrid) return;
 
     const samplePlaces = [
-        { id: 1, name: "Budget Hostel Room", price: 25, image: "images/icon.png" },
-        { id: 2, name: "Shared Apartment", price: 45, image: "images/icon.png" },
-        { id: 3, name: "Cozy Downtown Apartment", price: 85, image: "images/icon.png" },
-        { id: 4, name: "Modern Loft Space", price: 120, image: "images/icon.png" },
-        { id: 5, name: "Luxury Penthouse", price: 250, image: "images/icon.png" },
-        { id: 6, name: "Beach House Villa", price: 180, image: "images/icon.png" }
+        { id: 1, name: "Budget Hostel Room", price: 25, image: "images/Budget Hostel Room.png" },
+        { id: 2, name: "Shared Apartment", price: 45, image: "images/Shared Apartment.png" },
+        { id: 3, name: "Cozy Downtown Apartment", price: 85, image: "images/Cozy Downtown Apartment.png" },
+        { id: 4, name: "Modern Loft Space", price: 120, image: "images/Modern Loft Space.png" },
+        { id: 5, name: "Luxury Penthouse", price: 250, image: "images/Luxury Penthouse.png" },
+        { id: 6, name: "Beach House Villa", price: 180, image: "images/Beach house villas.png" }
     ];
 
     placesGrid.innerHTML = '';
@@ -361,6 +361,15 @@ async function loadPlaceDetails() {
     }
 }
 
+// Generate amenity icons HTML
+function generateAmenityIcons() {
+    return [
+        '<img src="images/icon_bed.png" alt="Bed" style="width: 20px; height: 20px; margin-right: 5px; vertical-align: middle;">Bed',
+        '<img src="images/icon_bath.png" alt="Bath" style="width: 20px; height: 20px; margin-right: 5px; vertical-align: middle;">Bath',
+        '<img src="images/icon_wifi.png" alt="WiFi" style="width: 20px; height: 20px; margin-right: 5px; vertical-align: middle;">WiFi'
+    ];
+}
+
 // Display place details (clear and populate the #place-details section)
 function displayPlaceDetails(place) {
     // Update page title and main heading
@@ -407,7 +416,7 @@ function displayPlaceDetails(place) {
         <div style="grid-column: 1 / -1;">
             <h4>Amenities</h4>
             <ul class="amenities-list">
-                ${place.amenities ? place.amenities.map(amenity => `<li>${amenity}</li>`).join('') : '<li>No amenities listed</li>'}
+                ${generateAmenityIcons().map(amenity => `<li>${amenity}</li>`).join('')}
             </ul>
         </div>
     `;
@@ -421,7 +430,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 1,
             name: "Budget Hostel Room",
             price: 25,
-            image: "images/icon.png",
+            image: "images/Budget Hostel Room.png",
             host: "Sarah Johnson",
             location: "City Center",
             description: "A comfortable and affordable hostel room perfect for budget travelers. Clean facilities and friendly staff.",
@@ -431,7 +440,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 2,
             name: "Shared Apartment",
             price: 45,
-            image: "images/icon.png",
+            image: "images/Shared Apartment.png",
             host: "Mike Chen",
             location: "Suburban Area",
             description: "A nice shared apartment with common areas and a great community atmosphere.",
@@ -441,7 +450,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 3,
             name: "Cozy Downtown Apartment",
             price: 85,
-            image: "images/icon.png",
+            image: "images/Cozy Downtown Apartment.png",
             host: "John Doe",
             location: "Downtown Area",
             description: "A beautiful and cozy apartment located in the heart of downtown. Perfect for business travelers and tourists alike.",
@@ -451,7 +460,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 4,
             name: "Modern Loft Space",
             price: 120,
-            image: "images/icon.png",
+            image: "images/Modern Loft Space.png",
             host: "Jane Smith",
             location: "Arts District",
             description: "A stylish modern loft with great city views and contemporary amenities.",
@@ -461,7 +470,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 5,
             name: "Luxury Penthouse",
             price: 250,
-            image: "images/icon.png",
+            image: "images/Luxury Penthouse.png",
             host: "Robert Wilson",
             location: "Uptown",
             description: "An exclusive luxury penthouse with premium amenities and stunning views.",
@@ -471,7 +480,7 @@ function displaySamplePlaceDetails(placeId) {
             id: 6,
             name: "Beach House Villa",
             price: 180,
-            image: "images/icon.png",
+            image: "images/Beach house villas.png",
             host: "Maria Garcia",
             location: "Beachfront",
             description: "A beautiful beach house villa with direct beach access and ocean views.",
