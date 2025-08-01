@@ -509,7 +509,8 @@ function displaySamplePlaceDetails(placeId) {
     const place = samplePlaces[placeId] || samplePlaces['1'];
     displayPlaceDetails(place);
     
-    // Display sample reviews
+    // Get stored reviews from localStorage and combine with sample reviews
+    const storedReviews = JSON.parse(localStorage.getItem(`reviews_${placeId}`) || '[]');
     const sampleReviews = [
         {
             user_name: "Alice Smith",
@@ -528,7 +529,9 @@ function displaySamplePlaceDetails(placeId) {
         }
     ];
     
-    displayReviews(sampleReviews);
+    // Combine stored reviews (new ones first) with sample reviews
+    const allReviews = [...storedReviews, ...sampleReviews];
+    displayReviews(allReviews);
 }
 
 // Load reviews for a place
@@ -592,6 +595,20 @@ async function submitReview(placeId, rating, comment) {
         if (rating && comment.trim()) {
             console.log('Using demo review submission');
             console.log(`Review submitted: ${rating} stars - ${comment}`);
+            
+            // Store review locally for demo purposes
+            const newReview = {
+                user_name: 'You', // In a real app, this would come from the authenticated user
+                rating: parseInt(rating),
+                comment: comment.trim(),
+                date: new Date().toISOString()
+            };
+            
+            // Get existing reviews from localStorage
+            const existingReviews = JSON.parse(localStorage.getItem(`reviews_${placeId}`) || '[]');
+            existingReviews.unshift(newReview); // Add new review at the beginning
+            localStorage.setItem(`reviews_${placeId}`, JSON.stringify(existingReviews));
+            
             return { success: true };
         }
         
