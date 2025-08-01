@@ -14,7 +14,7 @@ body {
 
 /* Header Styles */
 header {
-    background-color: #f8a304;
+    background-color: #fefcfa;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     padding: 1rem 0;
     position: sticky;
@@ -54,7 +54,7 @@ header {
 
 /* Navigation Styles */
 nav {
-    background-color: #fd9801;
+    background-color: #fcaa04;
     padding: 0.5rem 0;
 }
 
