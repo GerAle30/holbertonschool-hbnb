@@ -275,8 +275,8 @@ h3 {
 }
 
 .review-card {
-    background-color: white;
-    border: 1px solid #ddd;
+    background-color: rgb(241, 239, 238);
+    border: 1px solid #f79c00;
     border-radius: 10px;
     padding: 10px;
     margin: 20px;
@@ -288,7 +288,7 @@ h3 {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #a2865e;
     padding-bottom: 0.5rem;
 }
 
@@ -362,7 +362,7 @@ h3 {
 }
 
 .submit-button {
-    background-color: #007bff;
+    background-color: #ff9800;
     color: white;
     padding: 0.75rem 1.5rem;
     border: none;
@@ -373,12 +373,12 @@ h3 {
 }
 
 .submit-button:hover {
-    background-color: #0056b3;
+    background-color: #ff9800;
 }
 
 /* Add Review Section */
 .add-review {
-    background-color: white;
+    background-color: rgb(250, 247, 243);
     border-radius: 10px;
     padding: 2rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -386,7 +386,7 @@ h3 {
 }
 
 .add-review h3 {
-    color: #333;
+    color: #0d0d0d;
     margin-bottom: 1rem;
     border-bottom: 2px solid #28a745;
     padding-bottom: 0.5rem;
